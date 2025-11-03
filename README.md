@@ -85,7 +85,12 @@ Using Provider pattern with three main providers:
 1. Clone the repository
 2. Run `flutter pub get`
 3. Configure Firebase (see Firebase Setup)
-4. Run `flutter run` on a mobile device or emulator
+4. **IMPORTANT**: Copy `lib/firebase_options_template.dart` to `lib/firebase_options.dart` and replace placeholder values with your Firebase project keys
+5. Run `flutter run` on a mobile device or emulator
+
+## Security Note
+
+⚠️ **NEVER commit `firebase_options.dart` to version control!** This file contains sensitive API keys and is already added to `.gitignore`.
 
 ## Dependencies
 
