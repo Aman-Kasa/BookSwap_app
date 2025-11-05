@@ -38,48 +38,17 @@ class BrowseListingsScreen extends StatelessWidget {
           ),
           // Books List
           Expanded(
-            child: Consumer<BookProvider>(
-              builder: (context, bookProvider, child) {
-                return StreamBuilder<List<BookModel>>(
-                  stream: bookProvider.getAllBooks(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: AppTheme.accentColor,
-                        ),
-                      );
-                    }
-                    
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return _buildEmptyState();
-                    }
-                    
-                    final books = snapshot.data!;
-                    final currentUserId = context.read<AuthProvider>().user?.id;
-                    
-                    final availableBooks = books.where((book) => 
-                      book.ownerId != currentUserId && book.status == SwapStatus.Available
-                    ).toList();
-                    
-                    // Add sample books if empty
-                    final displayBooks = availableBooks.isEmpty ? _getSampleBooks() : availableBooks;
-                    
-                    return ListView.builder(
-                      padding: EdgeInsets.all(16),
-                      itemCount: displayBooks.length,
-                      itemBuilder: (context, index) {
-                        final book = displayBooks[index];
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 16),
-                          child: BookCard(
-                            book: book,
-                            onSwap: () => _initiateSwap(context, book),
-                          ),
-                        );
-                      },
-                    );
-                  },
+            child: ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: _getSampleBooks().length,
+              itemBuilder: (context, index) {
+                final book = _getSampleBooks()[index];
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: BookCard(
+                    book: book,
+                    onSwap: () => _showSwapDialog(context, book),
+                  ),
                 );
               },
             ),
@@ -205,24 +174,31 @@ class BrowseListingsScreen extends StatelessWidget {
     );
   }
 
-  void _initiateSwap(BuildContext context, BookModel book) async {
-    final authProvider = context.read<AuthProvider>();
-    final bookProvider = context.read<BookProvider>();
-    final chatProvider = context.read<ChatProvider>();
-    
-    if (authProvider.user == null) return;
-    
-    try {
-      await bookProvider.initiateSwap(book.id, authProvider.user!.id);
-      await chatProvider.createChatRoom(authProvider.user!.id, book.ownerId);
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Swap request sent!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
-    }
+  void _showSwapDialog(BuildContext context, BookModel book) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Swap Request'),
+        content: Text('Send swap request for "${book.title}" to ${book.ownerName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Swap request sent to ${book.ownerName}!'),
+                  backgroundColor: AppTheme.successColor,
+                ),
+              );
+            },
+            child: Text('Send Request'),
+          ),
+        ],
+      ),
+    );
   }
 }
