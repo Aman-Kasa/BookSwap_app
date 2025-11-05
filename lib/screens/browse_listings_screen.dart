@@ -62,15 +62,14 @@ class BrowseListingsScreen extends StatelessWidget {
                       book.ownerId != currentUserId && book.status == SwapStatus.Available
                     ).toList();
                     
-                    if (availableBooks.isEmpty) {
-                      return _buildEmptyState();
-                    }
+                    // Add sample books if empty
+                    final displayBooks = availableBooks.isEmpty ? _getSampleBooks() : availableBooks;
                     
                     return ListView.builder(
                       padding: EdgeInsets.all(16),
-                      itemCount: availableBooks.length,
+                      itemCount: displayBooks.length,
                       itemBuilder: (context, index) {
-                        final book = availableBooks[index];
+                        final book = displayBooks[index];
                         return Padding(
                           padding: EdgeInsets.only(bottom: 16),
                           child: BookCard(
@@ -88,6 +87,91 @@ class BrowseListingsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<BookModel> _getSampleBooks() {
+    return [
+      BookModel(
+        id: 'sample1',
+        title: 'The Picture of Dorian Gray',
+        author: 'Oscar Wilde',
+        condition: BookCondition.LikeNew,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780141439570-L.jpg',
+        ownerId: 'sample_user_1',
+        ownerName: 'Alice Johnson',
+        createdAt: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      BookModel(
+        id: 'sample2',
+        title: 'Murder on the Orient Express',
+        author: 'Agatha Christie',
+        condition: BookCondition.Good,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780062693662-L.jpg',
+        ownerId: 'sample_user_2',
+        ownerName: 'Bob Smith',
+        createdAt: DateTime.now().subtract(Duration(days: 2)),
+      ),
+      BookModel(
+        id: 'sample3',
+        title: 'The Adventures of Sherlock Holmes',
+        author: 'Arthur Conan Doyle',
+        condition: BookCondition.Used,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780486474915-L.jpg',
+        ownerId: 'sample_user_3',
+        ownerName: 'Carol Davis',
+        createdAt: DateTime.now().subtract(Duration(days: 3)),
+      ),
+      BookModel(
+        id: 'sample4',
+        title: 'The Book of Secrets',
+        author: 'Osho',
+        condition: BookCondition.New,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780312180584-L.jpg',
+        ownerId: 'sample_user_4',
+        ownerName: 'David Wilson',
+        createdAt: DateTime.now().subtract(Duration(days: 4)),
+      ),
+      BookModel(
+        id: 'sample5',
+        title: 'And Then There Were None',
+        author: 'Agatha Christie',
+        condition: BookCondition.LikeNew,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780062073488-L.jpg',
+        ownerId: 'sample_user_5',
+        ownerName: 'Emma Brown',
+        createdAt: DateTime.now().subtract(Duration(days: 5)),
+      ),
+      BookModel(
+        id: 'sample6',
+        title: 'The Hound of the Baskervilles',
+        author: 'Arthur Conan Doyle',
+        condition: BookCondition.Good,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780486282145-L.jpg',
+        ownerId: 'sample_user_6',
+        ownerName: 'Frank Miller',
+        createdAt: DateTime.now().subtract(Duration(days: 6)),
+      ),
+      BookModel(
+        id: 'sample7',
+        title: 'The Importance of Being Earnest',
+        author: 'Oscar Wilde',
+        condition: BookCondition.New,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780486264783-L.jpg',
+        ownerId: 'sample_user_7',
+        ownerName: 'Grace Lee',
+        createdAt: DateTime.now().subtract(Duration(days: 7)),
+      ),
+      BookModel(
+        id: 'sample8',
+        title: 'Death on the Nile',
+        author: 'Agatha Christie',
+        condition: BookCondition.Used,
+        imageUrl: 'https://covers.openlibrary.org/b/isbn/9780062073556-L.jpg',
+        ownerId: 'sample_user_8',
+        ownerName: 'Henry Taylor',
+        createdAt: DateTime.now().subtract(Duration(days: 8)),
+      ),
+    ];
   }
 
   Widget _buildEmptyState() {
