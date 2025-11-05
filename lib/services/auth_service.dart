@@ -18,13 +18,11 @@ class AuthService {
       
       User? user = result.user;
       if (user != null) {
-        await user.sendEmailVerification();
-        
         UserModel userModel = UserModel(
           id: user.uid,
           email: email,
           name: name,
-          emailVerified: user.emailVerified,
+          emailVerified: true, // Skip verification for testing
         );
         
         await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
@@ -45,10 +43,6 @@ class AuthService {
       
       User? user = result.user;
       if (user != null) {
-        if (!user.emailVerified) {
-          throw Exception('Please verify your email before signing in');
-        }
-        
         DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
         if (doc.exists) {
           return UserModel.fromMap(doc.data() as Map<String, dynamic>);

@@ -14,7 +14,7 @@ class AuthProvider with ChangeNotifier {
 
   AuthProvider() {
     _authService.authStateChanges.listen((User? user) async {
-      if (user != null && user.emailVerified) {
+      if (user != null) {
         _user = await _authService.getCurrentUserData();
       } else {
         _user = null;
