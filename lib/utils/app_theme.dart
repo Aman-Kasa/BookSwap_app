@@ -2,34 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AppTheme {
-  // Premium Gradient Colors
-  static const Color primaryColor = Color(0xFF667eea);
-  static const Color accentColor = Color(0xFF764ba2);
-  static const Color backgroundColor = Color(0xFFF8FAFF);
-  static const Color cardColor = Color(0xFFFFFFFF);
+  // Dark Theme Colors - Inspired by the image
+  static const Color primaryColor = Color(0xFF1A1B2E);
+  static const Color secondaryColor = Color(0xFF16213E);
+  static const Color accentColor = Color(0xFFFFC107);
+  static const Color backgroundColor = Color(0xFF0F1419);
+  static const Color cardColor = Color(0xFF1E2139);
+  static const Color surfaceColor = Color(0xFF252B42);
   
   // Text Colors
-  static const Color textPrimary = Color(0xFF2D3748);
-  static const Color textSecondary = Color(0xFF718096);
+  static const Color textPrimary = Color(0xFFFFFFFF);
+  static const Color textSecondary = Color(0xFFB0B3B8);
+  static const Color textTertiary = Color(0xFF8B949E);
   
   // Status Colors
-  static const Color successColor = Color(0xFF48BB78);
-  static const Color warningColor = Color(0xFFED8936);
-  static const Color errorColor = Color(0xFFF56565);
+  static const Color successColor = Color(0xFF00D4AA);
+  static const Color warningColor = Color(0xFFFFC107);
+  static const Color errorColor = Color(0xFFFF6B6B);
+  
+  // Gradient Colors
+  static const List<Color> primaryGradient = [
+    Color(0xFF1A1B2E),
+    Color(0xFF16213E),
+  ];
+  
+  static const List<Color> accentGradient = [
+    Color(0xFFFFC107),
+    Color(0xFFFFD54F),
+  ];
 
   static ThemeData get theme {
     return ThemeData(
-      primarySwatch: Colors.blue,
+      brightness: Brightness.dark,
+      primarySwatch: Colors.amber,
       primaryColor: primaryColor,
       scaffoldBackgroundColor: backgroundColor,
       fontFamily: 'SF Pro Display',
       
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: primaryColor,
         foregroundColor: textPrimary,
         elevation: 0,
         centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w700,
@@ -39,8 +54,8 @@ class AppTheme {
       
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
+          backgroundColor: accentColor,
+          foregroundColor: primaryColor,
           elevation: 0,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           shape: RoundedRectangleBorder(
@@ -48,16 +63,17 @@ class AppTheme {
           ),
           textStyle: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
+            color: primaryColor,
           ),
-          shadowColor: primaryColor.withOpacity(0.3),
+          shadowColor: accentColor.withOpacity(0.3),
         ),
       ),
       
       cardTheme: CardThemeData(
         color: cardColor,
         elevation: 8,
-        shadowColor: Colors.black.withOpacity(0.08),
+        shadowColor: Colors.black.withOpacity(0.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -65,30 +81,33 @@ class AppTheme {
       
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: surfaceColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: Colors.grey[700]!),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(color: Colors.grey[700]!),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: primaryColor, width: 2),
+          borderSide: BorderSide(color: accentColor, width: 2),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         labelStyle: TextStyle(
-          color: Colors.grey[600],
+          color: textSecondary,
           fontWeight: FontWeight.w500,
+        ),
+        hintStyle: TextStyle(
+          color: textTertiary,
         ),
       ),
       
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.white,
-        selectedItemColor: primaryColor,
-        unselectedItemColor: Colors.grey[400],
+        backgroundColor: primaryColor,
+        selectedItemColor: accentColor,
+        unselectedItemColor: textTertiary,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
       ),
@@ -114,6 +133,17 @@ class AppTheme {
           fontWeight: FontWeight.w400,
           color: textSecondary,
         ),
+      ),
+      
+      colorScheme: ColorScheme.dark(
+        primary: primaryColor,
+        secondary: accentColor,
+        surface: cardColor,
+        background: backgroundColor,
+        onPrimary: textPrimary,
+        onSecondary: primaryColor,
+        onSurface: textPrimary,
+        onBackground: textPrimary,
       ),
     );
   }

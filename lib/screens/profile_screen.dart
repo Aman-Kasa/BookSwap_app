@@ -12,115 +12,237 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
   final _locationController = TextEditingController();
   bool _isEditing = false;
   bool _isUploading = false;
   File? _imageFile;
+  
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
     final user = context.read<AuthProvider>().user;
     _locationController.text = user?.location ?? '';
+    
+    _fadeController = AnimationController(duration: Duration(milliseconds: 1000), vsync: this);
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+    _fadeController.forward();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        backgroundColor: AppTheme.primaryColor,
-        actions: [
-          IconButton(
-            icon: Icon(_isEditing ? Icons.save : Icons.edit),
-            onPressed: _isEditing ? _saveProfile : () => setState(() => _isEditing = true),
+      backgroundColor: AppTheme.backgroundColor,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppTheme.primaryColor,
+              AppTheme.backgroundColor,
+            ],
+            stops: [0.0, 0.3],
           ),
-        ],
-      ),
-      body: Consumer<AuthProvider>(
-        builder: (context, authProvider, child) {
-          final user = authProvider.user;
-          if (user == null) return Center(child: CircularProgressIndicator());
-
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(20),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
             child: Column(
               children: [
-                // Profile Picture
-                GestureDetector(
-                  onTap: _isEditing ? _pickImage : null,
-                  child: Stack(
+                // Header
+                Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                        backgroundImage: _imageFile != null 
-                            ? FileImage(_imageFile!)
-                            : user.profileImageUrl.isNotEmpty
-                                ? NetworkImage(user.profileImageUrl)
-                                : null,
-                        child: user.profileImageUrl.isEmpty && _imageFile == null
-                            ? Icon(Icons.person, size: 60, color: AppTheme.primaryColor)
-                            : null,
+                      ShaderMask(
+                        shaderCallback: (bounds) => LinearGradient(
+                          colors: AppTheme.accentGradient,
+                        ).createShader(bounds),
+                        child: Text(
+                          'Profile',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      if (_isEditing)
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: AppTheme.accentColor,
-                              shape: BoxShape.circle,
+                      Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: AppTheme.accentGradient),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.accentColor.withOpacity(0.3),
+                              blurRadius: 15,
+                              offset: Offset(0, 5),
                             ),
-                            child: Icon(Icons.camera_alt, color: Colors.white, size: 20),
-                          ),
+                          ],
                         ),
-                      if (_isUploading)
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: CircularProgressIndicator(color: Colors.white),
-                            ),
-                          ),
+                        child: IconButton(
+                          icon: Icon(_isEditing ? Icons.save : Icons.edit, color: AppTheme.primaryColor),
+                          onPressed: _isEditing ? _saveProfile : () => setState(() => _isEditing = true),
                         ),
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(height: 30),
-                
-                // User Info Cards
-                _buildInfoCard('Name', user.name, Icons.person),
-                _buildInfoCard('Email', user.email, Icons.email),
-                _buildInfoCard('University', user.university, Icons.school),
-                _buildLocationCard(user.location),
-                
-                SizedBox(height: 30),
-                
-                // Sign Out Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => authProvider.signOut(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.errorColor,
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                // Profile Content
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.backgroundColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
                       ),
                     ),
-                    child: Text('Sign Out', style: TextStyle(color: Colors.white)),
+                    child: Consumer<AuthProvider>(
+                      builder: (context, authProvider, child) {
+                        final user = authProvider.user;
+                        if (user == null) return Center(child: CircularProgressIndicator(color: AppTheme.accentColor));
+
+                        return SingleChildScrollView(
+                          padding: EdgeInsets.all(24),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20),
+                              // Profile Picture
+                              GestureDetector(
+                                onTap: _isEditing ? _pickImage : null,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: LinearGradient(colors: AppTheme.accentGradient),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppTheme.accentColor.withOpacity(0.4),
+                                            blurRadius: 30,
+                                            offset: Offset(0, 15),
+                                          ),
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.all(4),
+                                      child: CircleAvatar(
+                                        radius: 60,
+                                        backgroundColor: AppTheme.surfaceColor,
+                                        backgroundImage: _imageFile != null 
+                                            ? FileImage(_imageFile!)
+                                            : user.profileImageUrl.isNotEmpty
+                                                ? NetworkImage(user.profileImageUrl)
+                                                : null,
+                                        child: user.profileImageUrl.isEmpty && _imageFile == null
+                                            ? Icon(Icons.person, size: 60, color: AppTheme.accentColor)
+                                            : null,
+                                      ),
+                                    ),
+                                    if (_isEditing)
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(colors: AppTheme.accentGradient),
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppTheme.accentColor.withOpacity(0.4),
+                                                blurRadius: 10,
+                                                offset: Offset(0, 5),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Icon(Icons.camera_alt, color: AppTheme.primaryColor, size: 20),
+                                        ),
+                                      ),
+                                    if (_isUploading)
+                                      Positioned.fill(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(0.5),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: CircularProgressIndicator(color: AppTheme.accentColor),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 40),
+                              
+                              // User Info Cards
+                              _buildInfoCard('Name', user.name, Icons.person),
+                              _buildInfoCard('Email', user.email, Icons.email),
+                              _buildInfoCard('University', user.university, Icons.school),
+                              _buildLocationCard(user.location),
+                              
+                              SizedBox(height: 40),
+                              
+                              // Sign Out Button
+                              Container(
+                                width: double.infinity,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [AppTheme.errorColor, AppTheme.errorColor.withOpacity(0.8)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.errorColor.withOpacity(0.3),
+                                      blurRadius: 20,
+                                      offset: Offset(0, 10),
+                                    ),
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () => authProvider.signOut(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Sign Out',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -128,23 +250,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildInfoCard(String label, String value, IconData icon) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        color: AppTheme.cardColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 15,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppTheme.primaryColor),
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: AppTheme.accentGradient),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppTheme.primaryColor, size: 24),
+          ),
           SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-              Text(value.isEmpty ? 'Not set' : value, 
-                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.w500)),
+                SizedBox(height: 4),
+                Text(value.isEmpty ? 'Not set' : value, 
+                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
+              ],
+            ),
           ),
         ],
       ),
@@ -154,32 +292,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildLocationCard(String location) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        color: AppTheme.cardColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 15,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(Icons.location_on, color: AppTheme.primaryColor),
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: AppTheme.accentGradient),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.location_on, color: AppTheme.primaryColor, size: 24),
+          ),
           SizedBox(width: 16),
           Expanded(
             child: _isEditing
-                ? TextFormField(
-                    controller: _locationController,
-                    decoration: InputDecoration(
-                      labelText: 'Location',
-                      border: OutlineInputBorder(),
-                      isDense: true,
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: TextFormField(
+                      controller: _locationController,
+                      style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600),
+                      decoration: InputDecoration(
+                        hintText: 'Enter your location',
+                        hintStyle: TextStyle(color: AppTheme.textTertiary),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
                     ),
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Location', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                      Text('Location', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.w500)),
+                      SizedBox(height: 4),
                       Text(location.isEmpty ? 'Not set' : location, 
-                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
                     ],
                   ),
           ),

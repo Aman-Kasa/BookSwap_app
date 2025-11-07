@@ -55,15 +55,16 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     ));
 
     return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-              Color(0xFFf093fb),
+              AppTheme.primaryColor,
+              AppTheme.secondaryColor,
+              AppTheme.backgroundColor,
             ],
             stops: [0.0, 0.6, 1.0],
           ),
@@ -79,22 +80,24 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                   child: Column(
                     children: [
                       SizedBox(height: 40),
-                      // Animated Logo
+                      // Logo
                       Hero(
                         tag: 'logo',
                         child: Container(
                           padding: EdgeInsets.all(25),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
+                            gradient: LinearGradient(
+                              colors: AppTheme.accentGradient,
+                            ),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: AppTheme.accentColor.withOpacity(0.4),
                                 blurRadius: 30,
                                 offset: Offset(0, 15),
                               ),
                               BoxShadow(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.black.withOpacity(0.3),
                                 blurRadius: 20,
                                 offset: Offset(0, -10),
                               ),
@@ -103,14 +106,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           child: Icon(
                             Icons.menu_book_rounded,
                             size: 70,
-                            color: Colors.white,
+                            color: AppTheme.primaryColor,
                           ),
                         ),
                       ),
                       SizedBox(height: 30),
                       ShaderMask(
                         shaderCallback: (bounds) => LinearGradient(
-                          colors: [Colors.white, Colors.white.withOpacity(0.8)],
+                          colors: [AppTheme.accentColor, AppTheme.accentColor.withOpacity(0.8)],
                         ).createShader(bounds),
                         child: Text(
                           'Welcome Back',
@@ -121,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             letterSpacing: 1,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: AppTheme.accentColor.withOpacity(0.3),
                                 offset: Offset(0, 4),
                                 blurRadius: 8,
                               ),
@@ -134,25 +137,25 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         'Sign in to continue your book journey',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
-                          fontWeight: FontWeight.w300,
+                          color: AppTheme.textSecondary,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                       SizedBox(height: 50),
-                      // Premium Login Form
+                      // Login Form
                       Container(
                         padding: EdgeInsets.all(32),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppTheme.cardColor,
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
+                              color: Colors.black.withOpacity(0.3),
                               blurRadius: 40,
                               offset: Offset(0, 20),
                             ),
                             BoxShadow(
-                              color: Colors.white.withOpacity(0.1),
+                              color: AppTheme.accentColor.withOpacity(0.1),
                               blurRadius: 20,
                               offset: Offset(0, -5),
                             ),
@@ -185,24 +188,26 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                       value: _rememberMe,
                                       onChanged: (value) => setState(() => _rememberMe = value ?? false),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                      activeColor: Color(0xFF667eea),
+                                      activeColor: AppTheme.accentColor,
+                                      checkColor: AppTheme.primaryColor,
                                     ),
                                   ),
-                                  Text('Remember me', style: TextStyle(fontWeight: FontWeight.w500)),
+                                  Text('Remember me', 
+                                       style: TextStyle(fontWeight: FontWeight.w500, color: AppTheme.textPrimary)),
                                   Spacer(),
                                   TextButton(
                                     onPressed: () {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: Text('Password reset feature coming soon!'),
-                                          backgroundColor: Color(0xFF667eea),
+                                          backgroundColor: AppTheme.accentColor,
                                         ),
                                       );
                                     },
                                     child: Text(
                                       'Forgot Password?',
                                       style: TextStyle(
-                                        color: Color(0xFF667eea),
+                                        color: AppTheme.accentColor,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -217,12 +222,12 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     height: 56,
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
-                                        colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                                        colors: AppTheme.accentGradient,
                                       ),
                                       borderRadius: BorderRadius.circular(16),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Color(0xFF667eea).withOpacity(0.4),
+                                          color: AppTheme.accentColor.withOpacity(0.4),
                                           blurRadius: 20,
                                           offset: Offset(0, 10),
                                         ),
@@ -231,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     child: authProvider.isLoading
                                         ? Center(
                                             child: CircularProgressIndicator(
-                                              color: Colors.white,
+                                              color: AppTheme.primaryColor,
                                               strokeWidth: 3,
                                             ),
                                           )
@@ -247,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                                   ScaffoldMessenger.of(context).showSnackBar(
                                                     SnackBar(
                                                       content: Text(e.toString()),
-                                                      backgroundColor: Colors.red[400],
+                                                      backgroundColor: AppTheme.errorColor,
                                                     ),
                                                   );
                                                 }
@@ -265,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color: AppTheme.primaryColor,
                                               ),
                                             ),
                                           ),
@@ -294,12 +299,12 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 child: RichText(
                                   text: TextSpan(
                                     text: "Don't have an account? ",
-                                    style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 16),
                                     children: [
                                       TextSpan(
                                         text: 'Sign Up',
                                         style: TextStyle(
-                                          color: Color(0xFF667eea),
+                                          color: AppTheme.accentColor,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -331,24 +336,24 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: AppTheme.surfaceColor),
       ),
       child: TextFormField(
         controller: controller,
         obscureText: isPassword ? _obscurePassword : false,
         validator: validator,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppTheme.textPrimary),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500),
-          prefixIcon: Icon(icon, color: Color(0xFF667eea)),
+          labelStyle: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
+          prefixIcon: Icon(icon, color: AppTheme.accentColor),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
                     _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.grey[600],
+                    color: AppTheme.textSecondary,
                   ),
                   onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                 )

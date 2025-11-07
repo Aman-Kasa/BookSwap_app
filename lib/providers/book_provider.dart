@@ -6,8 +6,23 @@ import '../services/book_service.dart';
 class BookProvider with ChangeNotifier {
   final BookService _bookService = BookService();
   bool _isLoading = false;
+  List<BookModel> _books = [];
 
   bool get isLoading => _isLoading;
+  List<BookModel> get books => _books;
+
+  BookProvider() {
+    _loadBooks();
+  }
+
+  void _loadBooks() {
+    _bookService.getAllBooks().listen((books) {
+      _books = books;
+      notifyListeners();
+    }).onError((error) {
+      print('Error loading books: $error');
+    });
+  }
 
   Stream<List<BookModel>> getAllBooks() {
     return _bookService.getAllBooks();

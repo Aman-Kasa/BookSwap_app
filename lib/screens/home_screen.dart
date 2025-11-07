@@ -15,7 +15,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int _currentIndex = 0;
   late PageController _pageController;
   late AnimationController _animationController;
-  late Animation<double> _animation;
   
   final List<Widget> _screens = [
     BrowseListingsScreen(),
@@ -39,8 +38,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   ];
 
   final List<String> _labels = [
-    'Explore',
-    'My Books',
+    'Home',
+    'My Listings',
     'Chats',
     'Profile',
   ];
@@ -52,9 +51,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _animationController = AnimationController(
       duration: Duration(milliseconds: 300),
       vsync: this,
-    );
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _animationController.forward();
   }
@@ -70,10 +66,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
     ));
 
     return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
@@ -84,18 +81,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: _screens,
       ),
       bottomNavigationBar: Container(
-        height: 90,
+        height: 95,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.primaryColor,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 30,
+              offset: Offset(0, -15),
+            ),
+            BoxShadow(
+              color: AppTheme.accentColor.withOpacity(0.1),
               blurRadius: 20,
-              offset: Offset(0, -10),
+              offset: Offset(0, -5),
             ),
           ],
         ),
@@ -132,19 +134,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         curve: Curves.easeInOut,
         padding: EdgeInsets.symmetric(
           horizontal: isSelected ? 20 : 12,
-          vertical: 8,
+          vertical: 10,
         ),
         decoration: BoxDecoration(
           gradient: isSelected
               ? LinearGradient(
-                  colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                  colors: AppTheme.accentGradient,
                 )
               : null,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(25),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Color(0xFF667eea).withOpacity(0.3),
+                    color: AppTheme.accentColor.withOpacity(0.4),
                     blurRadius: 15,
                     offset: Offset(0, 5),
                   ),
@@ -159,8 +161,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Icon(
                 isSelected ? _activeIcons[index] : _inactiveIcons[index],
                 key: ValueKey(isSelected),
-                color: isSelected ? Colors.white : Colors.grey[600],
-                size: 24,
+                color: isSelected ? AppTheme.primaryColor : AppTheme.textTertiary,
+                size: 26,
               ),
             ),
             if (isSelected) ...[
@@ -171,9 +173,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: Text(
                   _labels[index],
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppTheme.primaryColor,
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),

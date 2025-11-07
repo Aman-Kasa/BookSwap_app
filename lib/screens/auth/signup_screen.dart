@@ -58,15 +58,16 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
     ));
 
     return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-              Color(0xFFf093fb),
+              AppTheme.primaryColor,
+              AppTheme.secondaryColor,
+              AppTheme.backgroundColor,
             ],
             stops: [0.0, 0.6, 1.0],
           ),
@@ -87,11 +88,11 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: AppTheme.surfaceColor.withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
-                              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                              icon: Icon(Icons.arrow_back_ios, color: AppTheme.textPrimary),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
@@ -101,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                       // Title
                       ShaderMask(
                         shaderCallback: (bounds) => LinearGradient(
-                          colors: [Colors.white, Colors.white.withOpacity(0.8)],
+                          colors: [AppTheme.accentColor, AppTheme.accentColor.withOpacity(0.8)],
                         ).createShader(bounds),
                         child: Text(
                           'Create Account',
@@ -112,7 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                             letterSpacing: 1,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: AppTheme.accentColor.withOpacity(0.3),
                                 offset: Offset(0, 4),
                                 blurRadius: 8,
                               ),
@@ -125,8 +126,8 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                         'Join the BookSwap community today',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
-                          fontWeight: FontWeight.w300,
+                          color: AppTheme.textSecondary,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                       SizedBox(height: 40),
@@ -134,16 +135,16 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                       Container(
                         padding: EdgeInsets.all(32),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppTheme.cardColor,
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
+                              color: Colors.black.withOpacity(0.3),
                               blurRadius: 40,
                               offset: Offset(0, 20),
                             ),
                             BoxShadow(
-                              color: Colors.white.withOpacity(0.1),
+                              color: AppTheme.accentColor.withOpacity(0.1),
                               blurRadius: 20,
                               offset: Offset(0, -5),
                             ),
@@ -203,7 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                               Container(
                                 padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[50],
+                                  color: AppTheme.surfaceColor,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
@@ -214,7 +215,8 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                         value: _acceptTerms,
                                         onChanged: (value) => setState(() => _acceptTerms = value ?? false),
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                        activeColor: Color(0xFF667eea),
+                                        activeColor: AppTheme.accentColor,
+                                        checkColor: AppTheme.primaryColor,
                                       ),
                                     ),
                                     SizedBox(width: 8),
@@ -222,12 +224,12 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                       child: RichText(
                                         text: TextSpan(
                                           text: 'I agree to the ',
-                                          style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                                          style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
                                           children: [
                                             TextSpan(
                                               text: 'Terms of Service',
                                               style: TextStyle(
-                                                color: Color(0xFF667eea),
+                                                color: AppTheme.accentColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -235,7 +237,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                             TextSpan(
                                               text: 'Privacy Policy',
                                               style: TextStyle(
-                                                color: Color(0xFF667eea),
+                                                color: AppTheme.accentColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -255,16 +257,16 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                     decoration: BoxDecoration(
                                       gradient: _acceptTerms
                                           ? LinearGradient(
-                                              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                                              colors: AppTheme.accentGradient,
                                             )
                                           : LinearGradient(
-                                              colors: [Colors.grey[300]!, Colors.grey[400]!],
+                                              colors: [AppTheme.surfaceColor, AppTheme.surfaceColor],
                                             ),
                                       borderRadius: BorderRadius.circular(16),
                                       boxShadow: _acceptTerms
                                           ? [
                                               BoxShadow(
-                                                color: Color(0xFF667eea).withOpacity(0.4),
+                                                color: AppTheme.accentColor.withOpacity(0.4),
                                                 blurRadius: 20,
                                                 offset: Offset(0, 10),
                                               ),
@@ -274,7 +276,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                     child: authProvider.isLoading
                                         ? Center(
                                             child: CircularProgressIndicator(
-                                              color: Colors.white,
+                                              color: _acceptTerms ? AppTheme.primaryColor : AppTheme.textTertiary,
                                               strokeWidth: 3,
                                             ),
                                           )
@@ -292,7 +294,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                                         ScaffoldMessenger.of(context).showSnackBar(
                                                           SnackBar(
                                                             content: Text('Account created successfully!'),
-                                                            backgroundColor: Colors.green[400],
+                                                            backgroundColor: AppTheme.successColor,
                                                           ),
                                                         );
                                                         Navigator.pop(context);
@@ -300,7 +302,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                                         ScaffoldMessenger.of(context).showSnackBar(
                                                           SnackBar(
                                                             content: Text(e.toString()),
-                                                            backgroundColor: Colors.red[400],
+                                                            backgroundColor: AppTheme.errorColor,
                                                           ),
                                                         );
                                                       }
@@ -319,7 +321,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color: _acceptTerms ? AppTheme.primaryColor : AppTheme.textTertiary,
                                               ),
                                             ),
                                           ),
@@ -351,9 +353,9 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: AppTheme.surfaceColor),
       ),
       child: TextFormField(
         controller: controller,
@@ -363,18 +365,18 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                 : _obscurePassword
             : false,
         validator: validator,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppTheme.textPrimary),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w500),
-          prefixIcon: Icon(icon, color: Color(0xFF667eea)),
+          labelStyle: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
+          prefixIcon: Icon(icon, color: AppTheme.accentColor),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
                     isConfirmPassword
                         ? (_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility)
                         : (_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                    color: Colors.grey[600],
+                    color: AppTheme.textSecondary,
                   ),
                   onPressed: () => setState(() {
                     if (isConfirmPassword) {
