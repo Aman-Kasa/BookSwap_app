@@ -13,6 +13,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +100,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                             labelText: 'Password',
                             prefixIcon: Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
                           ),
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           validator: (value) => value?.isEmpty ?? true ? 'Enter password' : null,
+                        ),
+                        SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberMe,
+                              onChanged: (value) => setState(() => _rememberMe = value ?? false),
+                            ),
+                            Text('Remember me'),
+                            Spacer(),
+                            TextButton(
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Password reset email sent!')),
+                                );
+                              },
+                              child: Text('Forgot Password?'),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 32),
                         Consumer<AuthProvider>(

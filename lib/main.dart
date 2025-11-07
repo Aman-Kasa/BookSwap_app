@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'providers/book_provider.dart';
 import 'providers/chat_provider.dart';
+import 'screens/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'utils/app_theme.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'BookSwap',
         theme: AppTheme.theme,
-        home: AuthWrapper(),
+        home: SplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );

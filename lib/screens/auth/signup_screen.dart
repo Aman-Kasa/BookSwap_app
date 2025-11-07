@@ -13,6 +13,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  bool _acceptTerms = false;
 
   @override
   Widget build(BuildContext context) {
@@ -90,9 +94,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           decoration: InputDecoration(
                             labelText: 'Password',
                             prefixIcon: Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
+                            helperText: 'At least 6 characters',
                           ),
-                          obscureText: true,
-                          validator: (value) => value?.isEmpty ?? true ? 'Enter password' : null,
+                          obscureText: _obscurePassword,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) return 'Enter password';
+                            if (value!.length < 6) return 'Password must be at least 6 characters';
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        TextFormField(
+                          controller: _confirmPasswordController,
+                          decoration: InputDecoration(
+                            labelText: 'Confirm Password',
+                            prefixIcon: Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
+                              onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                            ),
+                          ),
+                          obscureText: _obscureConfirmPassword,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) return 'Confirm your password';
+                            if (value != _passwordController.text) return 'Passwords do not match';
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        CheckboxListTile(
+                          value: _acceptTerms,
+                          onChanged: (value) => setState(() => _acceptTerms = value ?? false),
+                          title: Text(
+                            'I agree to the Terms of Service and Privacy Policy',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
                         ),
                         SizedBox(height: 32),
                         Consumer<AuthProvider>(
@@ -106,7 +148,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ),
                                     )
                                   : ElevatedButton(
-                                      onPressed: () async {
+                                      onPressed: _acceptTerms ? () async {
                                         if (_formKey.currentState!.validate()) {
                                           try {
                                             await authProvider.signUp(
@@ -130,7 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             );
                                           }
                                         }
-                                      },
+                                      } : null,
                                       child: Text('Create Account'),
                                     ),
                             );

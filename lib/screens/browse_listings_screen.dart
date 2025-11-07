@@ -6,8 +6,42 @@ import '../providers/auth_provider.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/book_card.dart';
 import '../utils/app_theme.dart';
+import 'book_detail_screen.dart';
 
-class BrowseListingsScreen extends StatelessWidget {
+class BrowseListingsScreen extends StatefulWidget {
+  @override
+  _BrowseListingsScreenState createState() => _BrowseListingsScreenState();
+}
+
+class _BrowseListingsScreenState extends State<BrowseListingsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  List<BookModel> _filteredBooks = [];
+  List<BookModel> _allBooks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _allBooks = _getSampleBooks();
+    _filteredBooks = _allBooks;
+    _searchController.addListener(_filterBooks);
+  }
+
+  void _filterBooks() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredBooks = _allBooks.where((book) {
+        return book.title.toLowerCase().contains(query) ||
+               book.author.toLowerCase().contains(query);
+      }).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,9 +61,19 @@ class BrowseListingsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search books...',
+                  hintText: 'Search books or authors...',
                   prefixIcon: Icon(Icons.search, color: AppTheme.textSecondary),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            _filterBooks();
+                          },
+                        )
+                      : null,
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
@@ -40,14 +84,24 @@ class BrowseListingsScreen extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.all(16),
-              itemCount: _getSampleBooks().length,
+              itemCount: _filteredBooks.length,
               itemBuilder: (context, index) {
-                final book = _getSampleBooks()[index];
+                final book = _filteredBooks[index];
                 return Padding(
                   padding: EdgeInsets.only(bottom: 16),
-                  child: BookCard(
-                    book: book,
-                    onSwap: () => _showSwapDialog(context, book),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookDetailScreen(book: book),
+                        ),
+                      );
+                    },
+                    child: BookCard(
+                      book: book,
+                      onSwap: () => _showSwapDialog(context, book),
+                    ),
                   ),
                 );
               },
