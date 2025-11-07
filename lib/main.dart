@@ -7,6 +7,7 @@ import 'providers/book_provider.dart';
 import 'providers/chat_provider.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/auth/email_verification_screen.dart';
 import 'screens/home_screen.dart';
 import 'utils/app_theme.dart';
 
@@ -43,7 +44,11 @@ class AuthWrapper extends StatelessWidget {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
         if (authProvider.isAuthenticated) {
-          return HomeScreen();
+          if (authProvider.user?.emailVerified == true) {
+            return HomeScreen();
+          } else {
+            return EmailVerificationScreen();
+          }
         } else {
           return LoginScreen();
         }

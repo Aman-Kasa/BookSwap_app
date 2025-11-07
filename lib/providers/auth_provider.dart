@@ -23,12 +23,12 @@ class AuthProvider with ChangeNotifier {
     });
   }
 
-  Future<void> signUp(String email, String password, String name) async {
+  Future<void> signUp(String email, String password, String name, String university) async {
     _isLoading = true;
     notifyListeners();
     
     try {
-      _user = await _authService.signUp(email, password, name);
+      _user = await _authService.signUp(email, password, name, university);
       notifyListeners();
     } catch (e) {
       _isLoading = false;
@@ -65,5 +65,19 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> sendEmailVerification() async {
     await _authService.sendEmailVerification();
+  }
+
+  Future<bool> checkEmailVerified() async {
+    bool isVerified = await _authService.checkEmailVerified();
+    if (isVerified) {
+      _user = await _authService.getCurrentUserData();
+      notifyListeners();
+    }
+    return isVerified;
+  }
+
+  Future<void> getCurrentUserData() async {
+    _user = await _authService.getCurrentUserData();
+    notifyListeners();
   }
 }

@@ -9,7 +9,7 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  Future<UserModel?> signUp(String email, String password, String name) async {
+  Future<UserModel?> signUp(String email, String password, String name, String university) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -18,11 +18,21 @@ class AuthService {
       
       User? user = result.user;
       if (user != null) {
+        // Send email verification
+        try {
+          await user.sendEmailVerification();
+          print('Verification email sent to: $email');
+        } catch (e) {
+          print('Error sending verification email during signup: $e');
+          // Continue with signup even if email fails
+        }
+        
         UserModel userModel = UserModel(
           id: user.uid,
           email: email,
           name: name,
-          emailVerified: true, // Skip verification for testing
+          emailVerified: true, // Temporarily bypass for demo
+          university: university,
         );
         
         await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
@@ -61,8 +71,30 @@ class AuthService {
   Future<void> sendEmailVerification() async {
     User? user = _auth.currentUser;
     if (user != null && !user.emailVerified) {
-      await user.sendEmailVerification();
+      try {
+        await user.sendEmailVerification();
+        print('Verification email sent to: ${user.email}');
+      } catch (e) {
+        print('Error sending verification email: $e');
+        throw e;
+      }
     }
+  }
+
+  Future<bool> checkEmailVerified() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await user.reload();
+      user = _auth.currentUser;
+      if (user != null && user.emailVerified) {
+        // Update Firestore
+        await _firestore.collection('users').doc(user.uid).update({
+          'emailVerified': true,
+        });
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<UserModel?> getCurrentUserData() async {

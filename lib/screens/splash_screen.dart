@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../utils/app_theme.dart';
-import 'auth/login_screen.dart';
+import '../main.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -47,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => LoginScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) => AuthWrapper(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -65,6 +66,11 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ));
+    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -72,10 +78,11 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppTheme.primaryColor,
-              AppTheme.primaryColor.withOpacity(0.8),
-              AppTheme.accentColor.withOpacity(0.3),
+              Color(0xFF667eea),
+              Color(0xFF764ba2),
+              Color(0xFFf093fb),
             ],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
         child: Center(
@@ -90,13 +97,20 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     child: Container(
                       padding: EdgeInsets.all(30),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withOpacity(0.15),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 30,
+                            spreadRadius: 0,
+                            offset: Offset(0, 15),
+                          ),
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.1),
                             blurRadius: 20,
-                            spreadRadius: 5,
+                            spreadRadius: -5,
+                            offset: Offset(0, -10),
                           ),
                         ],
                       ),
@@ -114,18 +128,30 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 opacity: _fadeAnimation,
                 child: Column(
                   children: [
-                    Text(
-                      'BookSwap',
-                      style: TextStyle(
-                        fontSize: 42,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 2,
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [Colors.white, Colors.white.withOpacity(0.8)],
+                      ).createShader(bounds),
+                      child: Text(
+                        'BookSwap',
+                        style: TextStyle(
+                          fontSize: 48,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 3,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.3),
+                              offset: Offset(0, 4),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 16),
                     Text(
-                      'Swap Your Books\\nWith Other Students',
+                      'Swap Your Books\nWith Other Students',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,

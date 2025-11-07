@@ -32,7 +32,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Chat')),
+      appBar: AppBar(
+        title: Text('Chat'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info_outline),
+            onPressed: () => _showUserInfo(context),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
@@ -161,5 +169,21 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  void _showUserInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('User Info'),
+        content: Text('User profile info will be shown here'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 }

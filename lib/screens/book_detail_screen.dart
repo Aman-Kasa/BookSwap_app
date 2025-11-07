@@ -91,4 +91,195 @@ class BookDetailScreen extends StatelessWidget {
                     _buildInfoRow(Icons.star, 'Condition', book.condition.name),
                   ]),
                   SizedBox(height: 40),
-                  if (book.status == SwapStatus.Available)\n                    SizedBox(\n                      width: double.infinity,\n                      child: Container(\n                        decoration: BoxDecoration(\n                          gradient: LinearGradient(\n                            colors: [AppTheme.accentColor, Color(0xFFED8936)],\n                          ),\n                          borderRadius: BorderRadius.circular(12),\n                        ),\n                        child: ElevatedButton(\n                          onPressed: () => _showSwapDialog(context),\n                          style: ElevatedButton.styleFrom(\n                            backgroundColor: Colors.transparent,\n                            shadowColor: Colors.transparent,\n                            padding: EdgeInsets.symmetric(vertical: 16),\n                          ),\n                          child: Text(\n                            'Request Swap',\n                            style: TextStyle(\n                              fontSize: 18,\n                              fontWeight: FontWeight.bold,\n                              color: Colors.white,\n                            ),\n                          ),\n                        ),\n                      ),\n                    ),\n                ],\n              ),\n            ),\n          ),\n        ],\n      ),\n    );\n  }\n\n  Widget _buildInfoChip(String label, String value, Color color) {\n    return Container(\n      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),\n      decoration: BoxDecoration(\n        color: color.withOpacity(0.1),\n        borderRadius: BorderRadius.circular(20),\n        border: Border.all(color: color.withOpacity(0.3)),\n      ),\n      child: Row(\n        mainAxisSize: MainAxisSize.min,\n        children: [\n          Container(\n            width: 8,\n            height: 8,\n            decoration: BoxDecoration(\n              color: color,\n              shape: BoxShape.circle,\n            ),\n          ),\n          SizedBox(width: 8),\n          Text(\n            '$label: $value',\n            style: TextStyle(\n              fontWeight: FontWeight.w600,\n              color: color,\n            ),\n          ),\n        ],\n      ),\n    );\n  }\n\n  Widget _buildInfoSection(String title, List<Widget> children) {\n    return Column(\n      crossAxisAlignment: CrossAxisAlignment.start,\n      children: [\n        Text(\n          title,\n          style: TextStyle(\n            fontSize: 20,\n            fontWeight: FontWeight.bold,\n            color: AppTheme.textPrimary,\n          ),\n        ),\n        SizedBox(height: 12),\n        Container(\n          padding: EdgeInsets.all(16),\n          decoration: BoxDecoration(\n            color: Colors.grey[50],\n            borderRadius: BorderRadius.circular(12),\n            border: Border.all(color: Colors.grey[200]!),\n          ),\n          child: Column(children: children),\n        ),\n      ],\n    );\n  }\n\n  Widget _buildInfoRow(IconData icon, String label, String value) {\n    return Padding(\n      padding: EdgeInsets.symmetric(vertical: 8),\n      child: Row(\n        children: [\n          Icon(icon, color: AppTheme.textSecondary, size: 20),\n          SizedBox(width: 12),\n          Text(\n            '$label:',\n            style: TextStyle(\n              fontWeight: FontWeight.w600,\n              color: AppTheme.textSecondary,\n            ),\n          ),\n          SizedBox(width: 8),\n          Expanded(\n            child: Text(\n              value,\n              style: TextStyle(\n                color: AppTheme.textPrimary,\n              ),\n            ),\n          ),\n        ],\n      ),\n    );\n  }\n\n  void _showSwapDialog(BuildContext context) {\n    showDialog(\n      context: context,\n      builder: (context) => AlertDialog(\n        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),\n        title: Row(\n          children: [\n            Icon(Icons.swap_horiz, color: AppTheme.accentColor),\n            SizedBox(width: 8),\n            Text('Swap Request'),\n          ],\n        ),\n        content: Text('Send swap request for \"${book.title}\" to ${book.ownerName}?'),\n        actions: [\n          TextButton(\n            onPressed: () => Navigator.pop(context),\n            child: Text('Cancel'),\n          ),\n          ElevatedButton(\n            onPressed: () {\n              Navigator.pop(context);\n              ScaffoldMessenger.of(context).showSnackBar(\n                SnackBar(\n                  content: Text('Swap request sent to ${book.ownerName}!'),\n                  backgroundColor: AppTheme.successColor,\n                ),\n              );\n            },\n            child: Text('Send Request'),\n          ),\n        ],\n      ),\n    );\n  }\n\n  Color _getConditionColor(BookCondition condition) {\n    switch (condition) {\n      case BookCondition.New:\n        return AppTheme.successColor;\n      case BookCondition.LikeNew:\n        return Colors.blue;\n      case BookCondition.Good:\n        return AppTheme.warningColor;\n      case BookCondition.Used:\n        return Colors.grey;\n    }\n  }\n\n  Color _getStatusColor(SwapStatus status) {\n    switch (status) {\n      case SwapStatus.Available:\n        return AppTheme.successColor;\n      case SwapStatus.Pending:\n        return AppTheme.warningColor;\n      case SwapStatus.Accepted:\n        return Colors.blue;\n      case SwapStatus.Rejected:\n        return AppTheme.errorColor;\n    }\n  }\n\n  String _formatDate(DateTime date) {\n    final now = DateTime.now();\n    final difference = now.difference(date).inDays;\n    if (difference == 0) return 'Today';\n    if (difference == 1) return 'Yesterday';\n    return '$difference days ago';\n  }\n}
+                  if (book.status == SwapStatus.Available)
+                    SizedBox(
+                      width: double.infinity,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppTheme.accentColor, Color(0xFFED8936)],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () => _showSwapDialog(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: Text(
+                            'Request Swap',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(String label, String value, Color color) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          SizedBox(width: 8),
+          Text(
+            '$label: $value',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
+          ),
+        ),
+        SizedBox(height: 12),
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Column(children: children),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, color: AppTheme.textSecondary, size: 20),
+          SizedBox(width: 12),
+          Text(
+            '$label:',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textSecondary,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                color: AppTheme.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSwapDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.swap_horiz, color: AppTheme.accentColor),
+            SizedBox(width: 8),
+            Text('Swap Request'),
+          ],
+        ),
+        content: Text('Send swap request for "${book.title}" to ${book.ownerName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Swap request sent to ${book.ownerName}!'),
+                  backgroundColor: AppTheme.successColor,
+                ),
+              );
+            },
+            child: Text('Send Request'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getConditionColor(BookCondition condition) {
+    switch (condition) {
+      case BookCondition.New:
+        return AppTheme.successColor;
+      case BookCondition.LikeNew:
+        return Colors.blue;
+      case BookCondition.Good:
+        return AppTheme.warningColor;
+      case BookCondition.Used:
+        return Colors.grey;
+    }
+  }
+
+  Color _getStatusColor(SwapStatus status) {
+    switch (status) {
+      case SwapStatus.Available:
+        return AppTheme.successColor;
+      case SwapStatus.Pending:
+        return AppTheme.warningColor;
+      case SwapStatus.Accepted:
+        return Colors.blue;
+      case SwapStatus.Rejected:
+        return AppTheme.errorColor;
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date).inDays;
+    if (difference == 0) return 'Today';
+    if (difference == 1) return 'Yesterday';
+    return '$difference days ago';
+  }
+}
