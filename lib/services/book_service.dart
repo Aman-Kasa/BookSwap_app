@@ -10,22 +10,35 @@ class BookService {
   Stream<List<BookModel>> getAllBooks() {
     return _firestore
         .collection('books')
-        .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => BookModel.fromMap(doc.data()))
-            .toList());
+        .map((snapshot) {
+          List<BookModel> books = snapshot.docs
+              .map((doc) => BookModel.fromMap(doc.data()))
+              .toList();
+          // Sort locally instead of in Firestore
+          books.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return books;
+        });
   }
 
   Stream<List<BookModel>> getUserBooks(String userId) {
+    print('BookService: Querying books for userId: $userId');
     return _firestore
         .collection('books')
         .where('ownerId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => BookModel.fromMap(doc.data()))
-            .toList());
+        .map((snapshot) {
+          print('BookService: Found ${snapshot.docs.length} books for user');
+          List<BookModel> books = snapshot.docs
+              .map((doc) {
+                print('BookService: Book data: ${doc.data()}');
+                return BookModel.fromMap(doc.data());
+              })
+              .toList();
+          // Sort locally instead of in Firestore
+          books.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return books;
+        });
   }
 
   Stream<List<BookModel>> getUserOffers(String userId) {
@@ -51,16 +64,25 @@ class BookService {
 
   Future<void> createBook(BookModel book, File? imageFile) async {
     try {
+      print('BookService: Starting book creation');
       String bookId = _firestore.collection('books').doc().id;
+      print('BookService: Generated book ID: $bookId');
       String imageUrl = '';
       
       if (imageFile != null) {
+        print('BookService: Uploading image...');
         imageUrl = await uploadImage(imageFile, bookId);
+        print('BookService: Image uploaded: $imageUrl');
+      } else {
+        print('BookService: No image file provided');
       }
       
       BookModel newBook = book.copyWith(id: bookId, imageUrl: imageUrl);
+      print('BookService: Saving book to Firestore: ${newBook.toMap()}');
       await _firestore.collection('books').doc(bookId).set(newBook.toMap());
+      print('BookService: Book saved successfully!');
     } catch (e) {
+      print('BookService: Error creating book: $e');
       throw e;
     }
   }

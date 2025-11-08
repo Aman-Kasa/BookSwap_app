@@ -1,16 +1,14 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import '../models/book_model.dart';
 import '../providers/book_provider.dart';
-import '../providers/auth_provider.dart';
+import '../providers/auth_provider.dart' as app_auth;
+import '../utils/app_theme.dart';
 
 class AddBookScreen extends StatefulWidget {
-  final BookModel? book;
-
-  AddBookScreen({this.book});
-
   @override
   _AddBookScreenState createState() => _AddBookScreenState();
 }
@@ -19,92 +17,220 @@ class _AddBookScreenState extends State<AddBookScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _authorController = TextEditingController();
+  
   BookCondition _selectedCondition = BookCondition.Good;
-  File? _imageFile;
+  File? _selectedImage;
+  XFile? _selectedImageWeb;
   final ImagePicker _picker = ImagePicker();
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.book != null) {
-      _titleController.text = widget.book!.title;
-      _authorController.text = widget.book!.author;
-      _selectedCondition = widget.book!.condition;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isEditing = widget.book != null;
-    
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Edit Book' : 'Add Book'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+      backgroundColor: AppTheme.backgroundColor,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppTheme.primaryColor, AppTheme.backgroundColor],
+            stops: [0.0, 0.3],
+          ),
+        ),
+        child: SafeArea(
           child: Column(
             children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
-                validator: (value) => value?.isEmpty ?? true ? 'Enter title' : null,
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _authorController,
-                decoration: InputDecoration(labelText: 'Author'),
-                validator: (value) => value?.isEmpty ?? true ? 'Enter author' : null,
-              ),
-              SizedBox(height: 16),
-              DropdownButtonFormField<BookCondition>(
-                value: _selectedCondition,
-                decoration: InputDecoration(labelText: 'Condition'),
-                items: BookCondition.values.map((condition) {
-                  return DropdownMenuItem(
-                    value: condition,
-                    child: Text(condition.name),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCondition = value!;
-                  });
-                },
-              ),
-              SizedBox(height: 16),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    child: Text('Pick Image'),
-                  ),
-                  SizedBox(width: 16),
-                  if (_imageFile != null)
-                    Text('Image selected')
-                  else if (isEditing && widget.book!.imageUrl.isNotEmpty)
-                    Text('Current image will be kept'),
-                ],
-              ),
-              if (_imageFile != null)
-                Container(
-                  height: 200,
-                  width: 200,
-                  margin: EdgeInsets.symmetric(vertical: 16),
-                  child: Image.file(_imageFile!, fit: BoxFit.cover),
+              // Header
+              Padding(
+                padding: EdgeInsets.all(24),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceColor.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back_ios, color: AppTheme.textPrimary),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: AppTheme.accentGradient,
+                      ).createShader(bounds),
+                      child: Text(
+                        'Add Book',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              Spacer(),
-              Consumer<BookProvider>(
-                builder: (context, bookProvider, child) {
-                  return bookProvider.isLoading
-                      ? CircularProgressIndicator()
-                      : ElevatedButton(
-                          onPressed: _saveBook,
-                          child: Text(isEditing ? 'Update Book' : 'Add Book'),
-                        );
-                },
+              ),
+              // Form
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 20),
+                          // Image Picker
+                          Center(
+                            child: GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                width: 150,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.surfaceColor,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: AppTheme.accentColor, width: 2),
+                                ),
+                                child: _selectedImage != null || _selectedImageWeb != null
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(14),
+                                        child: kIsWeb && _selectedImageWeb != null
+                                            ? Image.network(_selectedImageWeb!.path, fit: BoxFit.cover)
+                                            : _selectedImage != null
+                                                ? Image.file(_selectedImage!, fit: BoxFit.cover)
+                                                : Container(),
+                                      )
+                                    : Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.camera_alt, size: 40, color: AppTheme.accentColor),
+                                          SizedBox(height: 8),
+                                          Text('Add Cover Photo', style: TextStyle(color: AppTheme.accentColor)),
+                                        ],
+                                      ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          // Title Field
+                          _buildTextField(
+                            controller: _titleController,
+                            label: 'Book Title',
+                            icon: Icons.book,
+                            validator: (value) => value?.isEmpty ?? true ? 'Enter book title' : null,
+                          ),
+                          SizedBox(height: 20),
+                          // Author Field
+                          _buildTextField(
+                            controller: _authorController,
+                            label: 'Author',
+                            icon: Icons.person,
+                            validator: (value) => value?.isEmpty ?? true ? 'Enter author name' : null,
+                          ),
+                          SizedBox(height: 20),
+                          // Condition Selector
+                          Text(
+                            'Condition',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Row(
+                            children: BookCondition.values.map((condition) {
+                              return Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 8),
+                                  child: GestureDetector(
+                                    onTap: () => setState(() => _selectedCondition = condition),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: _selectedCondition == condition
+                                            ? AppTheme.accentColor
+                                            : AppTheme.surfaceColor,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        _getConditionText(condition),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: _selectedCondition == condition
+                                              ? AppTheme.primaryColor
+                                              : AppTheme.textSecondary,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          SizedBox(height: 40),
+                          // Submit Button
+                          Consumer<BookProvider>(
+                            builder: (context, bookProvider, child) {
+                              return Container(
+                                width: double.infinity,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: AppTheme.accentGradient),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.accentColor.withOpacity(0.4),
+                                      blurRadius: 20,
+                                      offset: Offset(0, 10),
+                                    ),
+                                  ],
+                                ),
+                                child: bookProvider.isLoading
+                                    ? Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppTheme.primaryColor,
+                                          strokeWidth: 3,
+                                        ),
+                                      )
+                                    : ElevatedButton(
+                                        onPressed: _submitBook,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Add Book',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -113,47 +239,99 @@ class _AddBookScreenState extends State<AddBookScreen> {
     );
   }
 
-  void _pickImage() async {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: TextFormField(
+        controller: controller,
+        validator: validator,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppTheme.textPrimary),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
+          prefixIcon: Icon(icon, color: AppTheme.accentColor),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        ),
+      ),
+    );
+  }
+
+  String _getConditionText(BookCondition condition) {
+    switch (condition) {
+      case BookCondition.New:
+        return 'New';
+      case BookCondition.LikeNew:
+        return 'Like New';
+      case BookCondition.Good:
+        return 'Good';
+      case BookCondition.Used:
+        return 'Used';
+    }
+  }
+
+  Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _imageFile = File(image.path);
+        if (kIsWeb) {
+          _selectedImageWeb = image;
+        } else {
+          _selectedImage = File(image.path);
+        }
       });
     }
   }
 
-  void _saveBook() async {
+  Future<void> _submitBook() async {
     if (_formKey.currentState!.validate()) {
-      final authProvider = context.read<AuthProvider>();
-      final bookProvider = context.read<BookProvider>();
-      
-      if (authProvider.user == null) return;
-
       try {
-        final book = BookModel(
-          id: widget.book?.id ?? '',
-          title: _titleController.text,
-          author: _authorController.text,
-          condition: _selectedCondition,
-          imageUrl: widget.book?.imageUrl ?? '',
-          ownerId: authProvider.user!.id,
-          ownerName: authProvider.user!.name,
-          createdAt: widget.book?.createdAt ?? DateTime.now(),
-        );
+        final authProvider = context.read<app_auth.AuthProvider>();
+        final user = authProvider.user;
+        
+        if (user != null) {
+          print('Add Book - Creating book for user: ${user.id} (${user.name})');
+          final book = BookModel(
+            id: '',
+            title: _titleController.text,
+            author: _authorController.text,
+            condition: _selectedCondition,
+            imageUrl: '',
+            ownerId: user.id,
+            ownerName: user.name,
+            status: SwapStatus.Available,
+            createdAt: DateTime.now(),
+          );
 
-        if (widget.book != null) {
-          await bookProvider.updateBook(book, _imageFile);
-        } else {
-          await bookProvider.createBook(book, _imageFile);
+          File? imageFile = kIsWeb ? null : _selectedImage;
+          print('Creating book: ${book.title} by ${book.author}');
+          await context.read<BookProvider>().createBook(book, imageFile);
+          print('Book created successfully!');
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Book added successfully!'),
+              backgroundColor: AppTheme.accentColor,
+            ),
+          );
+          
+          Navigator.pop(context);
         }
-
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Book ${widget.book != null ? 'updated' : 'added'} successfully')),
-        );
       } catch (e) {
+        print('Error creating book: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }

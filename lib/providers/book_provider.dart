@@ -29,6 +29,7 @@ class BookProvider with ChangeNotifier {
   }
 
   Stream<List<BookModel>> getUserBooks(String userId) {
+    print('BookProvider: Getting user books for userId: $userId');
     return _bookService.getUserBooks(userId);
   }
 
@@ -41,8 +42,11 @@ class BookProvider with ChangeNotifier {
     notifyListeners();
     
     try {
+      print('BookProvider: Creating book ${book.title}');
       await _bookService.createBook(book, imageFile);
+      print('BookProvider: Book created successfully');
     } catch (e) {
+      print('BookProvider: Error creating book: $e');
       throw e;
     } finally {
       _isLoading = false;

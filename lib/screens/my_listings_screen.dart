@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/app_theme.dart';
+import '../models/book_model.dart';
+import '../widgets/book_card.dart';
+import '../providers/book_provider.dart';
+import '../providers/auth_provider.dart' as app_auth;
+import 'add_book_screen.dart';
 
 class MyListingsScreen extends StatefulWidget {
   @override
@@ -103,86 +109,175 @@ class _MyListingsScreenState extends State<MyListingsScreen> with TickerProvider
                       child: Column(
                         children: [
                           SizedBox(height: 20),
-                          // Empty State
+                          // Books List
                           Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(40),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(colors: AppTheme.accentGradient),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppTheme.accentColor.withOpacity(0.3),
-                                        blurRadius: 30,
-                                        offset: Offset(0, 15),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    Icons.library_books,
-                                    size: 80,
-                                    color: AppTheme.primaryColor,
-                                  ),
-                                ),
-                                SizedBox(height: 30),
-                                Text(
-                                  'No Books Listed Yet',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppTheme.textPrimary,
-                                  ),
-                                ),
-                                SizedBox(height: 12),
-                                Text(
-                                  'Add your first book to start\nswapping with other students',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: AppTheme.textSecondary,
-                                    height: 1.5,
-                                  ),
-                                ),
-                                SizedBox(height: 40),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(colors: AppTheme.accentGradient),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppTheme.accentColor.withOpacity(0.4),
-                                        blurRadius: 20,
-                                        offset: Offset(0, 10),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      // Navigate to add book screen
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                    ),
-                                    icon: Icon(Icons.add, color: AppTheme.primaryColor),
-                                    label: Text(
-                                      'Add Your First Book',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            child: Consumer<app_auth.AuthProvider>(
+                              builder: (context, authProvider, child) {
+                                if (authProvider.user == null) {
+                                  return Center(child: Text('Please log in'));
+                                }
+                                
+                                return StreamBuilder<List<BookModel>>(
+                                  stream: context.read<BookProvider>().getUserBooks(authProvider.user!.id),
+                                  builder: (context, snapshot) {
+                                    print('StreamBuilder state: ${snapshot.connectionState}');
+                                    print('StreamBuilder hasData: ${snapshot.hasData}');
+                                    print('StreamBuilder data length: ${snapshot.data?.length ?? 0}');
+                                    
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Center(child: CircularProgressIndicator(color: AppTheme.accentColor));
+                                    }
+                                    
+                                    if (snapshot.hasError) {
+                                      print('StreamBuilder error: ${snapshot.error}');
+                                      return Center(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.error, color: Colors.red, size: 48),
+                                            SizedBox(height: 16),
+                                            Text('Error loading books: ${snapshot.error}'),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                    
+                                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                      return Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(40),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(colors: AppTheme.accentGradient),
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: AppTheme.accentColor.withOpacity(0.3),
+                                                  blurRadius: 30,
+                                                  offset: Offset(0, 15),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Icon(
+                                              Icons.library_books,
+                                              size: 80,
+                                              color: AppTheme.primaryColor,
+                                            ),
+                                          ),
+                                          SizedBox(height: 30),
+                                          Text(
+                                            'No Books Listed Yet',
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.w700,
+                                              color: AppTheme.textPrimary,
+                                            ),
+                                          ),
+                                          SizedBox(height: 12),
+                                          Text(
+                                            'Add your first book to start\nswapping with other students',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: AppTheme.textSecondary,
+                                              height: 1.5,
+                                            ),
+                                          ),
+                                          SizedBox(height: 40),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(colors: AppTheme.accentGradient),
+                                              borderRadius: BorderRadius.circular(16),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: AppTheme.accentColor.withOpacity(0.4),
+                                                  blurRadius: 20,
+                                                  offset: Offset(0, 10),
+                                                ),
+                                              ],
+                                            ),
+                                            child: ElevatedButton.icon(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => AddBookScreen()),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.transparent,
+                                                shadowColor: Colors.transparent,
+                                                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(16),
+                                                ),
+                                              ),
+                                              icon: Icon(Icons.add, color: AppTheme.primaryColor),
+                                              label: Text(
+                                                'Add Your First Book',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppTheme.primaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                    
+                                    // Show user's books
+                                    List<BookModel> userBooks = snapshot.data!;
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Your Books',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppTheme.textPrimary,
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(colors: AppTheme.accentGradient),
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              child: Text(
+                                                '${userBooks.length} books',
+                                                style: TextStyle(
+                                                  color: AppTheme.primaryColor,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 20),
+                                        Expanded(
+                                          child: ListView.builder(
+                                            padding: EdgeInsets.only(bottom: 100),
+                                            itemCount: userBooks.length,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding: EdgeInsets.only(bottom: 16),
+                                                child: BookCard(book: userBooks[index]),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -209,7 +304,10 @@ class _MyListingsScreenState extends State<MyListingsScreen> with TickerProvider
         ),
         child: FloatingActionButton.extended(
           onPressed: () {
-            // Navigate to add book screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddBookScreen()),
+            );
           },
           backgroundColor: Colors.transparent,
           elevation: 0,

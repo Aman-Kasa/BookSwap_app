@@ -5,6 +5,7 @@ import '../models/book_model.dart';
 import '../widgets/book_card.dart';
 import '../providers/book_provider.dart';
 import '../utils/sample_data.dart';
+import 'add_book_screen.dart';
 
 class BrowseListingsScreen extends StatefulWidget {
   @override
@@ -322,7 +323,10 @@ class _BrowseListingsScreenState extends State<BrowseListingsScreen> with Ticker
         ),
         child: FloatingActionButton.extended(
           onPressed: () {
-            // Navigate to add book screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddBookScreen()),
+            );
           },
           backgroundColor: Colors.transparent,
           elevation: 0,
