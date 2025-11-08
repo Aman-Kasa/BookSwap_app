@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/auth_provider.dart' as app_auth;
 import '../../utils/app_theme.dart';
 import '../home_screen.dart';
 
@@ -47,14 +48,18 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   ),
                 ),
                 SizedBox(height: 16),
-                Text(
-                  'We have sent a verification email to your address.\n\nPlease check your email and click the verification link.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withOpacity(0.9),
-                    height: 1.5,
-                  ),
+                Consumer<app_auth.AuthProvider>(
+                  builder: (context, authProvider, child) {
+                    return Text(
+                      'We have sent a verification email to:\n${FirebaseAuth.instance.currentUser?.email ?? "your email"}\n\nPlease check your email (including spam folder) and click the verification link.\n\nAfter clicking the link, return here and tap "I\'ve Verified My Email".',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white.withOpacity(0.9),
+                        height: 1.5,
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: 40),
                 SizedBox(
@@ -91,27 +96,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+
+                SizedBox(height: 24),
                 TextButton(
                   onPressed: () {
-                    // Temporary skip for testing
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    );
-                  },
-                  child: Text(
-                    'Skip Verification (Testing)',
-                    style: TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8),
-                TextButton(
-                  onPressed: () {
-                    context.read<AuthProvider>().signOut();
+                    context.read<app_auth.AuthProvider>().signOut();
                   },
                   child: Text(
                     'Sign Out',
@@ -135,7 +124,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     });
 
     try {
-      bool isVerified = await context.read<AuthProvider>().checkEmailVerified();
+      bool isVerified = await context.read<app_auth.AuthProvider>().checkEmailVerified();
       if (isVerified) {
         Navigator.pushReplacement(
           context,
@@ -165,7 +154,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   void _resendEmail() async {
     try {
-      await context.read<AuthProvider>().sendEmailVerification();
+      await context.read<app_auth.AuthProvider>().sendEmailVerification();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Verification email sent! Check spam folder if not received.'),

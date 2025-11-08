@@ -293,8 +293,9 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                                         );
                                                         ScaffoldMessenger.of(context).showSnackBar(
                                                           SnackBar(
-                                                            content: Text('Account created successfully!'),
+                                                            content: Text('Account created! Please check your email for verification.'),
                                                             backgroundColor: AppTheme.successColor,
+                                                            duration: Duration(seconds: 4),
                                                           ),
                                                         );
                                                         Navigator.pop(context);

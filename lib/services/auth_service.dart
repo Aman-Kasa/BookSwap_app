@@ -31,7 +31,7 @@ class AuthService {
           id: user.uid,
           email: email,
           name: name,
-          emailVerified: true, // Temporarily bypass for demo
+          emailVerified: false, // Properly enforce email verification
           university: university,
         );
         
@@ -53,9 +53,27 @@ class AuthService {
       
       User? user = result.user;
       if (user != null) {
-        DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
-        if (doc.exists) {
-          return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+        // Check if email is verified
+        await user.reload();
+        User? reloadedUser = _auth.currentUser;
+        
+        if (reloadedUser != null && !reloadedUser.emailVerified) {
+          await _auth.signOut();
+          throw Exception('Please verify your email before signing in');
+        }
+        
+        if (reloadedUser != null) {
+          DocumentSnapshot doc = await _firestore.collection('users').doc(reloadedUser.uid).get();
+          if (doc.exists) {
+            // Update emailVerified status in Firestore
+            await _firestore.collection('users').doc(reloadedUser.uid).update({
+              'emailVerified': true,
+            });
+            
+            Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+            userData['emailVerified'] = true;
+            return UserModel.fromMap(userData);
+          }
         }
       }
     } catch (e) {
@@ -76,8 +94,12 @@ class AuthService {
         print('Verification email sent to: ${user.email}');
       } catch (e) {
         print('Error sending verification email: $e');
-        throw e;
+        throw Exception('Failed to send verification email. Please try again.');
       }
+    } else if (user == null) {
+      throw Exception('No user logged in');
+    } else {
+      throw Exception('Email already verified');
     }
   }
 

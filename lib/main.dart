@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'providers/auth_provider.dart';
+import 'providers/auth_provider.dart' as app_auth;
 import 'providers/book_provider.dart';
 import 'providers/chat_provider.dart';
 import 'screens/splash_screen.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => app_auth.AuthProvider()),
         ChangeNotifierProvider(create: (_) => BookProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
@@ -41,10 +42,12 @@ class MyApp extends StatelessWidget {
 class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
+    return Consumer<app_auth.AuthProvider>(
       builder: (context, authProvider, child) {
         if (authProvider.isAuthenticated) {
-          if (authProvider.user?.emailVerified == true) {
+          // Check Firebase Auth emailVerified status, not Firestore
+          User? firebaseUser = FirebaseAuth.instance.currentUser;
+          if (firebaseUser != null && firebaseUser.emailVerified) {
             return HomeScreen();
           } else {
             return EmailVerificationScreen();
