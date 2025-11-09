@@ -178,15 +178,89 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('User Info'),
-        content: Text('User profile info will be shown here'),
+        backgroundColor: AppTheme.surfaceColor,
+        title: Text('User Information', style: TextStyle(color: AppTheme.textPrimary)),
+        content: FutureBuilder(
+          future: context.read<ChatProvider>().getUserInfo(widget.otherUserId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(color: AppTheme.accentColor),
+                  SizedBox(height: 16),
+                  Text('Loading user info...', style: TextStyle(color: AppTheme.textSecondary)),
+                ],
+              );
+            }
+            
+            if (snapshot.hasError || !snapshot.hasData) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error, color: AppTheme.errorColor, size: 48),
+                  SizedBox(height: 16),
+                  Text('Could not load user information', style: TextStyle(color: AppTheme.textSecondary)),
+                ],
+              );
+            }
+            
+            final user = snapshot.data!;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: AppTheme.accentColor,
+                  child: Text(
+                    user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
+                    style: TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildUserInfoRow(Icons.person, 'Name', user.name),
+                _buildUserInfoRow(Icons.email, 'Email', user.email),
+                _buildUserInfoRow(Icons.school, 'University', user.university),
+                if (user.phoneNumber.isNotEmpty)
+                  _buildUserInfoRow(Icons.phone, 'Phone', user.phoneNumber),
+                if (user.location.isNotEmpty)
+                  _buildUserInfoRow(Icons.location_on, 'Location', user.location),
+                _buildUserInfoRow(Icons.calendar_today, 'Member Since', _formatDate(user.joinedDate)),
+              ],
+            );
+          },
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text('Close', style: TextStyle(color: AppTheme.accentColor)),
           ),
         ],
       ),
     );
+  }
+  
+  Widget _buildUserInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, color: AppTheme.accentColor, size: 16),
+          SizedBox(width: 8),
+          Text('$label: ', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: Text(value.isEmpty ? 'Not set' : value, style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 }

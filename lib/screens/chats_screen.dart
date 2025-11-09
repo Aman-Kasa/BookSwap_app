@@ -212,8 +212,21 @@ class _ChatsScreenState extends State<ChatsScreen> with TickerProviderStateMixin
                                       itemCount: chatRooms.length,
                                       itemBuilder: (context, index) {
                                         ChatRoom chatRoom = chatRooms[index];
-                                        String otherUserId = chatRoom.participants
-                                            .firstWhere((id) => id != authProvider.user!.id);
+                                        String otherUserId = '';
+                                        
+                                        // Safely find the other user ID
+                                        try {
+                                          otherUserId = chatRoom.participants
+                                              .firstWhere((id) => id != authProvider.user!.id);
+                                        } catch (e) {
+                                          // If no other user found, skip this chat room
+                                          return SizedBox.shrink();
+                                        }
+                                        
+                                        // Skip if otherUserId is empty
+                                        if (otherUserId.isEmpty) {
+                                          return SizedBox.shrink();
+                                        }
                                         
                                         return FutureBuilder(
                                           future: context.read<ChatProvider>().getUserInfo(otherUserId),

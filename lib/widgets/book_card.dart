@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/book_model.dart';
 import '../utils/app_theme.dart';
 import '../providers/auth_provider.dart' as app_auth;
+import '../providers/swap_provider.dart';
 import '../services/chat_service.dart';
 import '../screens/chat_detail_screen.dart';
 
@@ -319,12 +320,24 @@ class BookCard extends StatelessWidget {
   Future<void> _initiateSwap(BuildContext context) async {
     try {
       final authProvider = context.read<app_auth.AuthProvider>();
+      final swapProvider = context.read<SwapProvider>();
       final currentUser = authProvider.user;
       
       if (currentUser != null) {
-        final chatService = ChatService();
+        // Create swap offer
+        await swapProvider.createSwapOffer(
+          bookId: book.id,
+          bookTitle: book.title,
+          bookAuthor: book.author,
+          bookImageUrl: book.imageUrl,
+          ownerId: book.ownerId,
+          ownerName: book.ownerName,
+          requesterId: currentUser.id,
+          requesterName: currentUser.name,
+        );
         
         // Create chat room between current user and book owner
+        final chatService = ChatService();
         await chatService.createChatRoom(currentUser.id, book.ownerId);
         
         // Get chat room ID
@@ -335,7 +348,7 @@ class BookCard extends StatelessWidget {
           chatRoomId,
           currentUser.id,
           book.ownerId,
-          'Hi! I\'m interested in swapping for your book "${book.title}". Let\'s discuss!',
+          'Hi! I\'ve made a swap offer for your book "${book.title}". Let\'s discuss!',
         );
         
         // Navigate to chat screen
@@ -352,16 +365,16 @@ class BookCard extends StatelessWidget {
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Chat started with ${book.ownerName}!'),
-            backgroundColor: AppTheme.accentColor,
+            content: Text('Swap offer sent to ${book.ownerName}!'),
+            backgroundColor: AppTheme.successColor,
           ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error starting chat: $e'),
-          backgroundColor: Colors.red,
+          content: Text('Error creating swap offer: $e'),
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     }

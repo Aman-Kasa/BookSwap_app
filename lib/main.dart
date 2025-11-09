@@ -6,10 +6,11 @@ import 'firebase_options.dart';
 import 'providers/auth_provider.dart' as app_auth;
 import 'providers/book_provider.dart';
 import 'providers/chat_provider.dart';
+import 'providers/swap_provider.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/email_verification_screen.dart';
-import 'screens/home_screen.dart';
+import 'widgets/shared_layout.dart';
 import 'utils/app_theme.dart';
 
 void main() async {
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => app_auth.AuthProvider()),
         ChangeNotifierProvider(create: (_) => BookProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => SwapProvider()),
       ],
       child: MaterialApp(
         title: 'BookSwap',
@@ -48,7 +50,7 @@ class AuthWrapper extends StatelessWidget {
           // Check Firebase Auth emailVerified status, not Firestore
           User? firebaseUser = FirebaseAuth.instance.currentUser;
           if (firebaseUser != null && firebaseUser.emailVerified) {
-            return HomeScreen();
+            return SharedLayout();
           } else {
             return EmailVerificationScreen();
           }
