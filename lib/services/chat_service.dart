@@ -14,12 +14,21 @@ class ChatService {
   Future<void> createChatRoom(String user1, String user2) async {
     String chatRoomId = getChatRoomId(user1, user2);
     
+    // Check if chat room already exists
+    DocumentSnapshot doc = await _firestore.collection('chatRooms').doc(chatRoomId).get();
+    if (doc.exists) {
+      print('ChatService: Chat room already exists: $chatRoomId');
+      return;
+    }
+    
     ChatRoom chatRoom = ChatRoom(
       id: chatRoomId,
       participants: [user1, user2],
     );
     
+    print('ChatService: Creating chat room: $chatRoomId');
     await _firestore.collection('chatRooms').doc(chatRoomId).set(chatRoom.toMap());
+    print('ChatService: Chat room created successfully');
   }
 
   Stream<List<ChatRoom>> getUserChatRooms(String userId) {
@@ -45,28 +54,36 @@ class ChatService {
   }
 
   Future<void> sendMessage(String chatRoomId, String senderId, String receiverId, String message) async {
-    String messageId = _firestore.collection('chatRooms').doc(chatRoomId).collection('messages').doc().id;
-    
-    ChatMessage chatMessage = ChatMessage(
-      id: messageId,
-      senderId: senderId,
-      receiverId: receiverId,
-      message: message,
-      timestamp: DateTime.now(),
-    );
-    
-    await _firestore
-        .collection('chatRooms')
-        .doc(chatRoomId)
-        .collection('messages')
-        .doc(messageId)
-        .set(chatMessage.toMap());
-    
-    // Update chat room with last message
-    await _firestore.collection('chatRooms').doc(chatRoomId).update({
-      'lastMessage': message,
-      'lastMessageTime': DateTime.now().millisecondsSinceEpoch,
-    });
+    try {
+      String messageId = _firestore.collection('chatRooms').doc(chatRoomId).collection('messages').doc().id;
+      
+      ChatMessage chatMessage = ChatMessage(
+        id: messageId,
+        senderId: senderId,
+        receiverId: receiverId,
+        message: message,
+        timestamp: DateTime.now(),
+      );
+      
+      print('ChatService: Sending message to room $chatRoomId');
+      await _firestore
+          .collection('chatRooms')
+          .doc(chatRoomId)
+          .collection('messages')
+          .doc(messageId)
+          .set(chatMessage.toMap());
+      
+      // Update chat room with last message
+      await _firestore.collection('chatRooms').doc(chatRoomId).update({
+        'lastMessage': message,
+        'lastMessageTime': DateTime.now().millisecondsSinceEpoch,
+      });
+      
+      print('ChatService: Message sent successfully');
+    } catch (e) {
+      print('ChatService: Error sending message: $e');
+      throw e;
+    }
   }
 
   Future<UserModel?> getUserInfo(String userId) async {

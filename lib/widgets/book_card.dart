@@ -217,7 +217,7 @@ class BookCard extends StatelessWidget {
                     ),
                     child: Text(
                       'Accept',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                   ),
                   SizedBox(height: 4),
@@ -229,7 +229,7 @@ class BookCard extends StatelessWidget {
                     ),
                     child: Text(
                       'Reject',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                   ),
                 ],
@@ -255,32 +255,15 @@ class BookCard extends StatelessWidget {
   }
 
   Widget _buildBookImage(String imageUrl) {
+    if (imageUrl.isEmpty) return _buildPlaceholder();
+    
     try {
-      // Check if it's base64 encoded
-      if (imageUrl.startsWith('data:') || !imageUrl.startsWith('http')) {
-        // Remove data URL prefix if present
-        String base64String = imageUrl.contains(',') ? imageUrl.split(',')[1] : imageUrl;
-        return Image.memory(
-          base64Decode(base64String),
-          fit: BoxFit.cover,
-        );
-      } else {
-        // It's a regular URL
-        return CachedNetworkImage(
-          imageUrl: imageUrl,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
-            color: Colors.grey[100],
-            child: Center(
-              child: CircularProgressIndicator(
-                color: AppTheme.accentColor,
-                strokeWidth: 2,
-              ),
-            ),
-          ),
-          errorWidget: (context, url, error) => _buildPlaceholder(),
-        );
-      }
+      // Always treat as base64 since we store it that way
+      return Image.memory(
+        base64Decode(imageUrl),
+        fit: BoxFit.cover,
+        height: 120,
+      );
     } catch (e) {
       return _buildPlaceholder();
     }
@@ -318,13 +301,17 @@ class BookCard extends StatelessWidget {
   }
 
   Future<void> _initiateSwap(BuildContext context) async {
+    print('BookCard: Starting swap initiation');
     try {
       final authProvider = context.read<app_auth.AuthProvider>();
       final swapProvider = context.read<SwapProvider>();
       final currentUser = authProvider.user;
       
       if (currentUser != null) {
+        print('BookCard: User authenticated: ${currentUser.name}');
+        
         // Create swap offer
+        print('BookCard: Creating swap offer...');
         await swapProvider.createSwapOffer(
           bookId: book.id,
           bookTitle: book.title,
@@ -335,15 +322,17 @@ class BookCard extends StatelessWidget {
           requesterId: currentUser.id,
           requesterName: currentUser.name,
         );
+        print('BookCard: Swap offer created');
         
-        // Create chat room between current user and book owner
+        // Create chat room and navigate
+        print('BookCard: Creating chat room...');
         final chatService = ChatService();
         await chatService.createChatRoom(currentUser.id, book.ownerId);
         
-        // Get chat room ID
         String chatRoomId = chatService.getChatRoomId(currentUser.id, book.ownerId);
+        print('BookCard: Chat room ID: $chatRoomId');
         
-        // Send initial message
+        print('BookCard: Sending initial message...');
         await chatService.sendMessage(
           chatRoomId,
           currentUser.id,
@@ -351,7 +340,7 @@ class BookCard extends StatelessWidget {
           'Hi! I\'ve made a swap offer for your book "${book.title}". Let\'s discuss!',
         );
         
-        // Navigate to chat screen
+        print('BookCard: Navigating to chat screen...');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -362,18 +351,22 @@ class BookCard extends StatelessWidget {
             ),
           ),
         );
+        print('BookCard: Navigation completed');
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Swap offer sent to ${book.ownerName}!'),
+            content: Text('Swap offer sent! Chat opened.'),
             backgroundColor: AppTheme.successColor,
           ),
         );
+      } else {
+        print('BookCard: User not authenticated');
       }
     } catch (e) {
+      print('BookCard: Error in swap initiation: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error creating swap offer: $e'),
+          content: Text('Error: $e'),
           backgroundColor: AppTheme.errorColor,
         ),
       );

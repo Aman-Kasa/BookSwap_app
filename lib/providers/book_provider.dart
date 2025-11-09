@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/book_model.dart';
 import '../services/book_service.dart';
 
@@ -17,11 +18,21 @@ class BookProvider with ChangeNotifier {
 
   void _loadBooks() {
     _bookService.getAllBooks().listen((books) {
+      print('BookProvider: Loaded ${books.length} books');
       _books = books;
       notifyListeners();
     }).onError((error) {
-      print('Error loading books: $error');
+      print('BookProvider: Error loading books: $error');
     });
+  }
+
+  Future<void> clearCache() async {
+    try {
+      await FirebaseFirestore.instance.clearPersistence();
+      print('BookProvider: Cache cleared');
+    } catch (e) {
+      print('BookProvider: Error clearing cache: $e');
+    }
   }
 
   Stream<List<BookModel>> getAllBooks() {

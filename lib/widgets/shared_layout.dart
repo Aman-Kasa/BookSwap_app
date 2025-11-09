@@ -111,29 +111,24 @@ class _SharedLayoutState extends State<SharedLayout> with TickerProviderStateMix
         children: _screens,
       ),
       bottomNavigationBar: Container(
-        height: 95,
+        height: 80,
         decoration: BoxDecoration(
           color: AppTheme.primaryColor,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
           ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3),
-              blurRadius: 30,
-              offset: Offset(0, -15),
-            ),
-            BoxShadow(
-              color: AppTheme.accentColor.withOpacity(0.1),
               blurRadius: 20,
-              offset: Offset(0, -5),
+              offset: Offset(0, -10),
             ),
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(5, (index) => _buildNavItem(index)),
@@ -194,8 +189,8 @@ class _SharedLayoutState extends State<SharedLayout> with TickerProviderStateMix
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 20 : 12,
-          vertical: 10,
+          horizontal: isSelected ? 12 : 8,
+          vertical: 8,
         ),
         decoration: BoxDecoration(
           gradient: isSelected
@@ -235,7 +230,7 @@ class _SharedLayoutState extends State<SharedLayout> with TickerProviderStateMix
                   _labels[index],
                   style: TextStyle(
                     color: AppTheme.primaryColor,
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

@@ -83,7 +83,13 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
+    try {
+      await _auth.signOut();
+      print('AuthService: User signed out successfully');
+    } catch (e) {
+      print('AuthService: Error signing out: $e');
+      throw e;
+    }
   }
 
   Future<void> sendEmailVerification() async {

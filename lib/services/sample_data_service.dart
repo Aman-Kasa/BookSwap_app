@@ -107,7 +107,7 @@ class SampleDataService {
           ),
         );
         
-        await _bookService.createBook(book, null);
+        await _bookService.createBookSimple(book);
       }
     } catch (e) {
       print('Error populating sample books: $e');

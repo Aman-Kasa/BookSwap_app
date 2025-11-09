@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_theme.dart';
 import '../models/book_model.dart';
+import '../models/swap_offer_model.dart';
 import '../widgets/book_card.dart';
 import '../providers/book_provider.dart';
+import '../providers/swap_provider.dart';
 import '../providers/auth_provider.dart' as app_auth;
 import 'add_book_screen.dart';
+import 'edit_book_screen.dart';
 
 class MyListingsScreen extends StatefulWidget {
   @override
@@ -30,6 +33,57 @@ class _MyListingsScreenState extends State<MyListingsScreen> with TickerProvider
   void dispose() {
     _fadeController.dispose();
     super.dispose();
+  }
+
+  void _editBook(BuildContext context, BookModel book) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditBookScreen(book: book),
+      ),
+    );
+  }
+
+  void _deleteBook(BuildContext context, BookModel book) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.surfaceColor,
+        title: Text('Delete Book', style: TextStyle(color: AppTheme.textPrimary)),
+        content: Text(
+          'Are you sure you want to delete "${book.title}"?',
+          style: TextStyle(color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                await context.read<BookProvider>().deleteBook(book.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Book deleted successfully!'),
+                    backgroundColor: AppTheme.successColor,
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error deleting book: $e'),
+                    backgroundColor: AppTheme.errorColor,
+                  ),
+                );
+              }
+            },
+            child: Text('Delete', style: TextStyle(color: AppTheme.errorColor)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -268,7 +322,18 @@ class _MyListingsScreenState extends State<MyListingsScreen> with TickerProvider
                                             itemBuilder: (context, index) {
                                               return Padding(
                                                 padding: EdgeInsets.only(bottom: 16),
-                                                child: BookCard(book: userBooks[index]),
+                                                child: BookCard(
+                                                  book: userBooks[index],
+                                                  isOwner: true,
+                                                  onEdit: () => _editBook(context, userBooks[index]),
+                                                  onDelete: () => _deleteBook(context, userBooks[index]),
+                                                  onAcceptSwap: userBooks[index].status == SwapStatus.Pending 
+                                                      ? () => _acceptSwap(context, userBooks[index]) 
+                                                      : null,
+                                                  onRejectSwap: userBooks[index].status == SwapStatus.Pending 
+                                                      ? () => _rejectSwap(context, userBooks[index]) 
+                                                      : null,
+                                                ),
                                               );
                                             },
                                           ),
@@ -322,5 +387,60 @@ class _MyListingsScreenState extends State<MyListingsScreen> with TickerProvider
         ),
       ),
     );
+  }
+
+  void _acceptSwap(BuildContext context, BookModel book) async {
+    try {
+      // Find the swap offer for this book
+      final authProvider = context.read<app_auth.AuthProvider>();
+      final swapProvider = context.read<SwapProvider>();
+      
+      // Get received offers to find the one for this book
+      final offers = await swapProvider.getReceivedSwapOffers(authProvider.user!.id).first;
+      final offer = offers.firstWhere((o) => o.bookId == book.id);
+      
+      await swapProvider.respondToSwapOffer(offer.id, OfferStatus.accepted);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Swap offer accepted!'),
+          backgroundColor: AppTheme.successColor,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error accepting swap: $e'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
+  }
+
+  void _rejectSwap(BuildContext context, BookModel book) async {
+    try {
+      final authProvider = context.read<app_auth.AuthProvider>();
+      final swapProvider = context.read<SwapProvider>();
+      
+      // Get received offers to find the one for this book
+      final offers = await swapProvider.getReceivedSwapOffers(authProvider.user!.id).first;
+      final offer = offers.firstWhere((o) => o.bookId == book.id);
+      
+      await swapProvider.respondToSwapOffer(offer.id, OfferStatus.rejected);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Swap offer rejected!'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error rejecting swap: $e'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
   }
 }

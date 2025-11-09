@@ -33,7 +33,7 @@ class BookModel {
       title: map['title'] ?? '',
       author: map['author'] ?? '',
       condition: BookCondition.values[map['condition'] ?? 0],
-      imageUrl: map['imageUrl'] ?? '',
+      imageUrl: map['imageBase64'] ?? map['imageUrl'] ?? '', // Support both fields
       ownerId: map['ownerId'] ?? '',
       ownerName: map['ownerName'] ?? '',
       status: SwapStatus.values[map['status'] ?? 0],

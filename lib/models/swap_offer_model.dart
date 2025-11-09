@@ -43,8 +43,14 @@ class SwapOfferModel {
       requesterId: map['requesterId'] ?? '',
       requesterName: map['requesterName'] ?? '',
       status: OfferStatus.values[map['status'] ?? 0],
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
-      respondedAt: map['respondedAt'] != null ? (map['respondedAt'] as Timestamp).toDate() : null,
+      createdAt: map['createdAt'] is Timestamp 
+          ? (map['createdAt'] as Timestamp).toDate()
+          : DateTime.fromMillisecondsSinceEpoch(map['createdAt'] ?? 0),
+      respondedAt: map['respondedAt'] != null 
+          ? (map['respondedAt'] is Timestamp 
+              ? (map['respondedAt'] as Timestamp).toDate()
+              : DateTime.fromMillisecondsSinceEpoch(map['respondedAt']))
+          : null,
     );
   }
 

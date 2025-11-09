@@ -7,23 +7,35 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:provider/provider.dart';
 import '../models/book_model.dart';
 import '../providers/book_provider.dart';
-import '../providers/auth_provider.dart' as app_auth;
 import '../utils/app_theme.dart';
 
-class AddBookScreen extends StatefulWidget {
+class EditBookScreen extends StatefulWidget {
+  final BookModel book;
+
+  EditBookScreen({required this.book});
+
   @override
-  _AddBookScreenState createState() => _AddBookScreenState();
+  _EditBookScreenState createState() => _EditBookScreenState();
 }
 
-class _AddBookScreenState extends State<AddBookScreen> {
+class _EditBookScreenState extends State<EditBookScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _authorController = TextEditingController();
+  late TextEditingController _titleController;
+  late TextEditingController _authorController;
   
-  BookCondition _selectedCondition = BookCondition.Good;
+  late BookCondition _selectedCondition;
   String _imageBase64 = '';
   bool _isUploading = false;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.book.title);
+    _authorController = TextEditingController(text: widget.book.author);
+    _selectedCondition = widget.book.condition;
+    _imageBase64 = widget.book.imageUrl;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +74,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                         colors: AppTheme.accentGradient,
                       ).createShader(bounds),
                       child: Text(
-                        'Add Book',
+                        'Edit Book',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
@@ -117,7 +129,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                             children: [
                                               Icon(Icons.camera_alt, size: 40, color: AppTheme.accentColor),
                                               SizedBox(height: 8),
-                                              Text('Add Cover Photo', style: TextStyle(color: AppTheme.accentColor)),
+                                              Text('Change Cover Photo', style: TextStyle(color: AppTheme.accentColor)),
                                             ],
                                           ),
                               ),
@@ -183,7 +195,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                             }).toList(),
                           ),
                           SizedBox(height: 40),
-                          // Submit Button
+                          // Update Button
                           Consumer<BookProvider>(
                             builder: (context, bookProvider, child) {
                               return Container(
@@ -208,7 +220,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                         ),
                                       )
                                     : ElevatedButton(
-                                        onPressed: _submitBook,
+                                        onPressed: _updateBook,
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.transparent,
                                           shadowColor: Colors.transparent,
@@ -217,7 +229,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                           ),
                                         ),
                                         child: Text(
-                                          'Add Book',
+                                          'Update Book',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -280,6 +292,57 @@ class _AddBookScreenState extends State<AddBookScreen> {
     }
   }
 
+  Widget _buildBookImage(String imageUrl) {
+    try {
+      if (imageUrl.startsWith('data:') || !imageUrl.startsWith('http')) {
+        String base64String = imageUrl.contains(',') ? imageUrl.split(',')[1] : imageUrl;
+        return Image.memory(
+          base64Decode(base64String),
+          fit: BoxFit.cover,
+        );
+      } else {
+        return Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+        );
+      }
+    } catch (e) {
+      return _buildPlaceholder();
+    }
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.accentColor.withOpacity(0.8), AppTheme.accentColor],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            widget.book.title.isNotEmpty ? widget.book.title[0].toUpperCase() : 'B',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 4),
+          Icon(
+            Icons.menu_book_rounded,
+            size: 20,
+            color: Colors.white.withOpacity(0.8),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
@@ -319,76 +382,26 @@ class _AddBookScreenState extends State<AddBookScreen> {
     }
   }
 
-  Widget _buildBookImage(String imageUrl) {
-    try {
-      if (imageUrl.startsWith('data:') || !imageUrl.startsWith('http')) {
-        String base64String = imageUrl.contains(',') ? imageUrl.split(',')[1] : imageUrl;
-        return Image.memory(
-          base64Decode(base64String),
-          fit: BoxFit.cover,
-        );
-      } else {
-        return Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
-        );
-      }
-    } catch (e) {
-      return _buildPlaceholder();
-    }
-  }
-
-  Widget _buildPlaceholder() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppTheme.accentColor.withOpacity(0.8), AppTheme.accentColor],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.camera_alt, size: 40, color: Colors.white),
-          SizedBox(height: 8),
-          Text('Add Cover Photo', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _submitBook() async {
+  Future<void> _updateBook() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final authProvider = context.read<app_auth.AuthProvider>();
-        final user = authProvider.user;
-        
-        if (user != null) {
-          final book = BookModel(
-            id: '',
-            title: _titleController.text,
-            author: _authorController.text,
-            condition: _selectedCondition,
-            imageUrl: _imageBase64,
-            ownerId: user.id,
-            ownerName: user.name,
-            status: SwapStatus.Available,
-            createdAt: DateTime.now(),
-          );
+        final updatedBook = widget.book.copyWith(
+          title: _titleController.text,
+          author: _authorController.text,
+          condition: _selectedCondition,
+          imageUrl: _imageBase64,
+        );
 
-          await context.read<BookProvider>().createBook(book, null);
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Book added successfully!'),
-              backgroundColor: AppTheme.accentColor,
-            ),
-          );
-          
-          Navigator.pop(context);
-        }
+        await context.read<BookProvider>().updateBook(updatedBook, null);
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Book updated successfully!'),
+            backgroundColor: AppTheme.accentColor,
+          ),
+        );
+        
+        Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

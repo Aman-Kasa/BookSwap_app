@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/app_theme.dart';
+import '../models/book_model.dart';
 import '../providers/auth_provider.dart' as app_auth;
+import '../providers/book_provider.dart';
+import '../providers/swap_provider.dart';
+import '../services/sample_data_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -159,6 +164,10 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                             // App Settings
                             _buildSectionHeader('App Settings'),
                             SizedBox(height: 16),
+                            _buildActionCard('Add Sample Books', Icons.library_add, () => _addSampleBooks(context)),
+                            _buildActionCard('Create Test Book', Icons.book_outlined, () => _testSwapOffer(context)),
+                            _buildActionCard('Reset Pending Books', Icons.refresh_outlined, () => _resetPendingBooks(context)),
+                            _buildActionCard('Clear Cache', Icons.refresh, () => _clearCache(context)),
                             _buildActionCard('Privacy Policy', Icons.privacy_tip, () => _showPrivacyPolicy(context)),
                             _buildActionCard('Terms of Service', Icons.description, () => _showTermsOfService(context)),
                             _buildActionCard('Help & Support', Icons.help, () => _showHelpSupport(context)),
@@ -192,7 +201,7 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
                                 ],
                               ),
                               child: ElevatedButton.icon(
-                                onPressed: () => authProvider.signOut(),
+                                onPressed: () => _showSignOutDialog(context, authProvider),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
@@ -658,6 +667,190 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
           Text('$label: ', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
           Expanded(
             child: Text(value, style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addSampleBooks(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.surfaceColor,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: AppTheme.accentColor),
+            SizedBox(height: 16),
+            Text('Adding sample books...', style: TextStyle(color: AppTheme.textPrimary)),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      await SampleDataService.populateSampleBooks();
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sample books added successfully!'),
+          backgroundColor: AppTheme.successColor,
+        ),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error adding sample books: $e'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
+  }
+
+  void _testSwapOffer(BuildContext context) async {
+    try {
+      final authProvider = context.read<app_auth.AuthProvider>();
+      final user = authProvider.user;
+      
+      if (user != null) {
+        // Create a test book first
+        final bookProvider = context.read<BookProvider>();
+        final testBook = BookModel(
+          id: '',
+          title: 'Test Swap Book',
+          author: 'Test Author',
+          condition: BookCondition.Good,
+          imageUrl: '',
+          ownerId: 'test_owner_${DateTime.now().millisecondsSinceEpoch}',
+          ownerName: 'Test Owner',
+          status: SwapStatus.Available,
+          createdAt: DateTime.now(),
+        );
+        
+        await bookProvider.createBook(testBook, null);
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Test book created! Now try swapping it.'),
+            backgroundColor: AppTheme.successColor,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error creating test book: $e'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
+  }
+
+  void _resetPendingBooks(BuildContext context) async {
+    try {
+      // Reset all pending books to available
+      final firestore = FirebaseFirestore.instance;
+      final booksQuery = await firestore.collection('books').where('status', isEqualTo: 1).get(); // 1 = Pending
+      
+      for (var doc in booksQuery.docs) {
+        await doc.reference.update({
+          'status': 0, // Available
+          'swapRequesterId': null,
+        });
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Reset ${booksQuery.docs.length} pending books to available'),
+          backgroundColor: AppTheme.successColor,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error resetting books: $e'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
+  }
+
+  void _clearCache(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.surfaceColor,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: AppTheme.accentColor),
+            SizedBox(height: 16),
+            Text('Clearing cache...', style: TextStyle(color: AppTheme.textPrimary)),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      await context.read<BookProvider>().clearCache();
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cache cleared! Please restart the app.'),
+          backgroundColor: AppTheme.successColor,
+        ),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error clearing cache: $e'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
+  }
+
+  void _showSignOutDialog(BuildContext context, app_auth.AuthProvider authProvider) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.surfaceColor,
+        title: Text('Sign Out', style: TextStyle(color: AppTheme.textPrimary)),
+        content: Text(
+          'Are you sure you want to sign out?',
+          style: TextStyle(color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                await authProvider.signOut();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Signed out successfully!'),
+                    backgroundColor: AppTheme.successColor,
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error signing out: $e'),
+                    backgroundColor: AppTheme.errorColor,
+                  ),
+                );
+              }
+            },
+            child: Text('Sign Out', style: TextStyle(color: AppTheme.errorColor)),
           ),
         ],
       ),

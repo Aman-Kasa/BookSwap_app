@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -70,47 +71,58 @@ class BookService {
     try {
       print('Starting image upload with ${imageBytes.length} bytes');
       Reference ref = _storage.ref().child('book_images').child('$bookId.jpg');
-      UploadTask uploadTask = ref.putData(Uint8List.fromList(imageBytes));
       
-      // Add timeout
-      TaskSnapshot snapshot = await uploadTask.timeout(Duration(seconds: 30));
+      // Set metadata for better handling
+      SettableMetadata metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+        customMetadata: {'bookId': bookId},
+      );
+      
+      UploadTask uploadTask = ref.putData(Uint8List.fromList(imageBytes), metadata);
+      
+      // Add timeout and progress monitoring
+      TaskSnapshot snapshot = await uploadTask.timeout(Duration(seconds: 60));
       String downloadUrl = await snapshot.ref.getDownloadURL();
       print('Image bytes uploaded successfully: $downloadUrl');
       return downloadUrl;
     } catch (e) {
       print('Error uploading image bytes: $e');
-      // Return empty string instead of throwing to continue without image
-      return '';
+      // Return placeholder instead of empty string
+      return 'https://via.placeholder.com/300x400?text=Book+Cover';
     }
   }
 
   Future<void> createBookSimple(BookModel book) async {
     try {
-      print('BookService: Starting simple book creation');
       String bookId = _firestore.collection('books').doc().id;
-      print('BookService: Generated book ID: $bookId');
-      print('BookService: Image data length: ${book.imageUrl.length}');
-      
       BookModel newBook = book.copyWith(id: bookId);
-      print('BookService: Saving book to Firestore with image data');
-      await _firestore.collection('books').doc(bookId).set(newBook.toMap());
-      print('BookService: Book saved successfully!');
+      
+      await _firestore.collection('books').doc(bookId).set({
+        'id': newBook.id,
+        'title': newBook.title,
+        'author': newBook.author,
+        'condition': newBook.condition.index,
+        'imageBase64': newBook.imageUrl, // Store as base64
+        'ownerId': newBook.ownerId,
+        'ownerName': newBook.ownerName,
+        'status': newBook.status.index,
+        'createdAt': newBook.createdAt.millisecondsSinceEpoch,
+        'swapRequesterId': newBook.swapRequesterId,
+      });
     } catch (e) {
-      print('BookService: Error creating book: $e');
       throw e;
     }
   }
 
   Future<void> updateBook(BookModel book, File? imageFile) async {
     try {
-      String imageUrl = book.imageUrl;
-      
-      if (imageFile != null) {
-        imageUrl = await uploadImage(imageFile, book.id);
-      }
-      
-      BookModel updatedBook = book.copyWith(imageUrl: imageUrl);
-      await _firestore.collection('books').doc(book.id).set(updatedBook.toMap());
+      await _firestore.collection('books').doc(book.id).update({
+        'title': book.title,
+        'author': book.author,
+        'condition': book.condition.index,
+        'imageBase64': book.imageUrl, // Store as base64
+        'status': book.status.index,
+      });
     } catch (e) {
       throw e;
     }

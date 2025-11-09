@@ -32,7 +32,25 @@ class SwapService {
         createdAt: DateTime.now(),
       );
 
-      await _firestore.collection('swapOffers').doc(offerId).set(offer.toMap());
+      print('SwapService: Creating offer for book $bookTitle by $requesterName');
+      Map<String, dynamic> offerData = {
+        'id': offerId,
+        'bookId': bookId,
+        'bookTitle': bookTitle,
+        'bookAuthor': bookAuthor,
+        'bookImageUrl': bookImageUrl,
+        'ownerId': ownerId,
+        'ownerName': ownerName,
+        'requesterId': requesterId,
+        'requesterName': requesterName,
+        'status': 0, // pending
+        'createdAt': DateTime.now().millisecondsSinceEpoch,
+        'respondedAt': null,
+      };
+      
+      print('SwapService: Saving offer data: $offerData');
+      await _firestore.collection('swapOffers').doc(offerId).set(offerData);
+      print('SwapService: Offer created successfully with ID: $offerId');
       
       // Update book status to pending
       await _firestore.collection('books').doc(bookId).update({
@@ -48,14 +66,32 @@ class SwapService {
 
   // Get swap offers for a user (as requester)
   Stream<List<SwapOfferModel>> getUserSwapOffers(String userId) {
+    print('SwapService: Getting swap offers for user: $userId');
     return _firestore
         .collection('swapOffers')
         .where('requesterId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => SwapOfferModel.fromMap(doc.data()))
-            .toList());
+        .map((snapshot) {
+          print('SwapService: Found ${snapshot.docs.length} offers for user $userId');
+          List<SwapOfferModel> offers = [];
+          
+          for (var doc in snapshot.docs) {
+            try {
+              print('SwapService: Processing offer doc: ${doc.id}');
+              print('SwapService: Offer data: ${doc.data()}');
+              SwapOfferModel offer = SwapOfferModel.fromMap(doc.data());
+              offers.add(offer);
+              print('SwapService: Successfully parsed offer: ${offer.bookTitle}');
+            } catch (e) {
+              print('SwapService: Error parsing offer ${doc.id}: $e');
+            }
+          }
+          
+          // Sort locally
+          offers.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          print('SwapService: Returning ${offers.length} parsed offers');
+          return offers;
+        });
   }
 
   // Get swap offers received by a user (as owner)
@@ -63,19 +99,25 @@ class SwapService {
     return _firestore
         .collection('swapOffers')
         .where('ownerId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => SwapOfferModel.fromMap(doc.data()))
-            .toList());
+        .map((snapshot) {
+          List<SwapOfferModel> offers = snapshot.docs
+              .map((doc) => SwapOfferModel.fromMap(doc.data()))
+              .toList();
+          // Sort locally
+          offers.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return offers;
+        });
   }
 
   // Respond to swap offer
   Future<void> respondToSwapOffer(String offerId, OfferStatus status) async {
     try {
+      print('SwapService: Responding to offer $offerId with status ${status.name}');
+      
       await _firestore.collection('swapOffers').doc(offerId).update({
         'status': status.index,
-        'respondedAt': Timestamp.fromDate(DateTime.now()),
+        'respondedAt': DateTime.now().millisecondsSinceEpoch,
       });
 
       // Get the offer to update book status
@@ -95,7 +137,10 @@ class SwapService {
       await _firestore.collection('books').doc(offer.bookId).update({
         'status': bookStatus.index,
       });
+      
+      print('SwapService: Book status updated to ${bookStatus.name}');
     } catch (e) {
+      print('SwapService: Error responding to offer: $e');
       throw Exception('Failed to respond to swap offer: $e');
     }
   }
