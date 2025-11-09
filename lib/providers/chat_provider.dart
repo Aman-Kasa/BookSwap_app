@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/chat_model.dart';
+import '../models/user_model.dart';
 import '../services/chat_service.dart';
 
 class ChatProvider with ChangeNotifier {
@@ -23,5 +24,9 @@ class ChatProvider with ChangeNotifier {
 
   String getChatRoomId(String user1, String user2) {
     return _chatService.getChatRoomId(user1, user2);
+  }
+
+  Future<UserModel?> getUserInfo(String userId) async {
+    return await _chatService.getUserInfo(userId);
   }
 }

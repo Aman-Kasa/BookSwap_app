@@ -6,6 +6,9 @@ class UserModel {
   final String university;
   final String location;
   final String profileImageUrl;
+  final String phoneNumber;
+  final String bio;
+  final DateTime joinedDate;
 
   UserModel({
     required this.id,
@@ -15,7 +18,10 @@ class UserModel {
     this.university = '',
     this.location = '',
     this.profileImageUrl = '',
-  });
+    this.phoneNumber = '',
+    this.bio = '',
+    DateTime? joinedDate,
+  }) : joinedDate = joinedDate ?? DateTime.now();
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
@@ -26,6 +32,11 @@ class UserModel {
       university: map['university'] ?? '',
       location: map['location'] ?? '',
       profileImageUrl: map['profileImageUrl'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
+      bio: map['bio'] ?? '',
+      joinedDate: map['joinedDate'] != null 
+          ? DateTime.fromMillisecondsSinceEpoch(map['joinedDate'])
+          : DateTime.now(),
     );
   }
 
@@ -38,6 +49,9 @@ class UserModel {
       'university': university,
       'location': location,
       'profileImageUrl': profileImageUrl,
+      'phoneNumber': phoneNumber,
+      'bio': bio,
+      'joinedDate': joinedDate.millisecondsSinceEpoch,
     };
   }
 
@@ -49,6 +63,9 @@ class UserModel {
     String? university,
     String? location,
     String? profileImageUrl,
+    String? phoneNumber,
+    String? bio,
+    DateTime? joinedDate,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -58,6 +75,9 @@ class UserModel {
       university: university ?? this.university,
       location: location ?? this.location,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      bio: bio ?? this.bio,
+      joinedDate: joinedDate ?? this.joinedDate,
     );
   }
 }

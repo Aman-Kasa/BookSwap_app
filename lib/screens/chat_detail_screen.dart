@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/chat_model.dart';
 import '../providers/chat_provider.dart';
-import '../providers/auth_provider.dart';
+import '../providers/auth_provider.dart' as app_auth;
+import '../utils/app_theme.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   final String chatRoomId;
   final String otherUserId;
+  final String otherUserName;
 
   ChatDetailScreen({
     required this.chatRoomId,
     required this.otherUserId,
+    required this.otherUserName,
   });
 
   @override
@@ -22,7 +25,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AuthProvider>().user?.id;
+    final userId = context.read<app_auth.AuthProvider>().user?.id;
     
     if (userId == null) {
       return Scaffold(
@@ -33,7 +36,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        title: Text(widget.otherUserName),
         actions: [
           IconButton(
             icon: Icon(Icons.info_outline),
@@ -148,7 +151,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
 
-    final userId = context.read<AuthProvider>().user?.id;
+    final userId = context.read<app_auth.AuthProvider>().user?.id;
     if (userId == null) return;
 
     try {

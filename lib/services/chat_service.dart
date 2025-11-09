@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/chat_model.dart';
+import '../models/user_model.dart';
 
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -66,5 +67,17 @@ class ChatService {
       'lastMessage': message,
       'lastMessageTime': DateTime.now().millisecondsSinceEpoch,
     });
+  }
+
+  Future<UserModel?> getUserInfo(String userId) async {
+    try {
+      DocumentSnapshot doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      }
+    } catch (e) {
+      print('Error getting user info: $e');
+    }
+    return null;
   }
 }

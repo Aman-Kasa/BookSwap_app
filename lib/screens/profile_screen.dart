@@ -1,10 +1,11 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../providers/auth_provider.dart';
+import '../providers/auth_provider.dart' as app_auth;
 import '../utils/app_theme.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -14,9 +15,12 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
   final _locationController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _bioController = TextEditingController();
   bool _isEditing = false;
   bool _isUploading = false;
-  File? _imageFile;
+  String _imageBase64 = '';
+  bool _imageChanged = false;
   
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -24,8 +28,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    final user = context.read<AuthProvider>().user;
+    final user = context.read<app_auth.AuthProvider>().user;
     _locationController.text = user?.location ?? '';
+    _phoneController.text = user?.phoneNumber ?? '';
+    _bioController.text = user?.bio ?? '';
+    _imageBase64 = user?.profileImageUrl ?? '';
     
     _fadeController = AnimationController(duration: Duration(milliseconds: 1000), vsync: this);
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -110,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                         topRight: Radius.circular(30),
                       ),
                     ),
-                    child: Consumer<AuthProvider>(
+                    child: Consumer<app_auth.AuthProvider>(
                       builder: (context, authProvider, child) {
                         final user = authProvider.user;
                         if (user == null) return Center(child: CircularProgressIndicator(color: AppTheme.accentColor));
@@ -141,14 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                       child: CircleAvatar(
                                         radius: 60,
                                         backgroundColor: AppTheme.surfaceColor,
-                                        backgroundImage: _imageFile != null 
-                                            ? FileImage(_imageFile!)
-                                            : user.profileImageUrl.isNotEmpty
-                                                ? NetworkImage(user.profileImageUrl)
-                                                : null,
-                                        child: user.profileImageUrl.isEmpty && _imageFile == null
-                                            ? Icon(Icons.person, size: 60, color: AppTheme.accentColor)
-                                            : null,
+                                        child: _buildProfileImage(user.profileImageUrl),
                                       ),
                                     ),
                                     if (_isEditing)
@@ -192,7 +192,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                               _buildInfoCard('Name', user.name, Icons.person),
                               _buildInfoCard('Email', user.email, Icons.email),
                               _buildInfoCard('University', user.university, Icons.school),
-                              _buildLocationCard(user.location),
+                              _buildEditableCard('Phone', user.phoneNumber, Icons.phone, _phoneController),
+                              _buildEditableCard('Location', user.location, Icons.location_on, _locationController),
+                              _buildEditableCard('Bio', user.bio, Icons.info_outline, _bioController, maxLines: 3),
+                              _buildInfoCard('Member Since', _formatDate(user.joinedDate), Icons.calendar_today),
                               
                               SizedBox(height: 40),
                               
@@ -289,7 +292,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildLocationCard(String location) {
+  Widget _buildEditableCard(String label, String value, IconData icon, TextEditingController controller, {int maxLines = 1}) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       padding: EdgeInsets.all(20),
@@ -312,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
               gradient: LinearGradient(colors: AppTheme.accentGradient),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.location_on, color: AppTheme.primaryColor, size: 24),
+            child: Icon(icon, color: AppTheme.primaryColor, size: 24),
           ),
           SizedBox(width: 16),
           Expanded(
@@ -323,10 +326,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: TextFormField(
-                      controller: _locationController,
+                      controller: controller,
+                      maxLines: maxLines,
                       style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600),
                       decoration: InputDecoration(
-                        hintText: 'Enter your location',
+                        hintText: 'Enter your $label',
                         hintStyle: TextStyle(color: AppTheme.textTertiary),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -336,9 +340,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Location', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.w500)),
+                      Text(label, style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.w500)),
                       SizedBox(height: 4),
-                      Text(location.isEmpty ? 'Not set' : location, 
+                      Text(value.isEmpty ? 'Not set' : value, 
                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimary)),
                     ],
                   ),
@@ -348,14 +352,48 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     );
   }
 
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  Widget _buildProfileImage(String currentImageUrl) {
+    String displayImage = _imageChanged ? _imageBase64 : currentImageUrl;
+    
+    if (displayImage.isNotEmpty) {
+      try {
+        return ClipOval(
+          child: Image.memory(
+            base64Decode(displayImage.contains(',') ? displayImage.split(',')[1] : displayImage),
+            width: 120,
+            height: 120,
+            fit: BoxFit.cover,
+          ),
+        );
+      } catch (e) {
+        return Icon(Icons.person, size: 60, color: AppTheme.accentColor);
+      }
+    }
+    return Icon(Icons.person, size: 60, color: AppTheme.accentColor);
+  }
+
   void _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     
     if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
+      try {
+        final bytes = await pickedFile.readAsBytes();
+        final base64Image = base64Encode(bytes);
+        
+        setState(() {
+          _imageBase64 = base64Image;
+          _imageChanged = true;
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading image: $e')),
+        );
+      }
     }
   }
 
@@ -363,19 +401,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     setState(() => _isUploading = true);
     
     try {
-      final user = context.read<AuthProvider>().user!;
-      String imageUrl = user.profileImageUrl;
-      
-      // Upload image if selected
-      if (_imageFile != null) {
-        final ref = FirebaseStorage.instance
-            .ref()
-            .child('profile_images')
-            .child('${user.id}.jpg');
-        
-        await ref.putFile(_imageFile!);
-        imageUrl = await ref.getDownloadURL();
-      }
+      final user = context.read<app_auth.AuthProvider>().user!;
+      String imageUrl = _imageChanged ? _imageBase64 : user.profileImageUrl;
       
       // Update user data
       await FirebaseFirestore.instance
@@ -383,16 +410,18 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           .doc(user.id)
           .update({
         'location': _locationController.text,
+        'phoneNumber': _phoneController.text,
+        'bio': _bioController.text,
         'profileImageUrl': imageUrl,
       });
       
       // Refresh user data
-      await context.read<AuthProvider>().getCurrentUserData();
+      await context.read<app_auth.AuthProvider>().getCurrentUserData();
       
       setState(() {
         _isEditing = false;
         _isUploading = false;
-        _imageFile = null;
+        _imageChanged = false;
       });
       
       ScaffoldMessenger.of(context).showSnackBar(

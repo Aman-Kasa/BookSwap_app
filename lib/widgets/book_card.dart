@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import '../models/book_model.dart';
 import '../utils/app_theme.dart';
+import '../providers/auth_provider.dart' as app_auth;
+import '../services/chat_service.dart';
+import '../screens/chat_detail_screen.dart';
 
 class BookCard extends StatelessWidget {
   final BookModel book;
@@ -171,7 +175,7 @@ class BookCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: ElevatedButton(
-                      onPressed: onSwap,
+                      onPressed: () => _initiateSwap(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
@@ -310,6 +314,57 @@ class BookCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _initiateSwap(BuildContext context) async {
+    try {
+      final authProvider = context.read<app_auth.AuthProvider>();
+      final currentUser = authProvider.user;
+      
+      if (currentUser != null) {
+        final chatService = ChatService();
+        
+        // Create chat room between current user and book owner
+        await chatService.createChatRoom(currentUser.id, book.ownerId);
+        
+        // Get chat room ID
+        String chatRoomId = chatService.getChatRoomId(currentUser.id, book.ownerId);
+        
+        // Send initial message
+        await chatService.sendMessage(
+          chatRoomId,
+          currentUser.id,
+          book.ownerId,
+          'Hi! I\'m interested in swapping for your book "${book.title}". Let\'s discuss!',
+        );
+        
+        // Navigate to chat screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatDetailScreen(
+              chatRoomId: chatRoomId,
+              otherUserId: book.ownerId,
+              otherUserName: book.ownerName,
+            ),
+          ),
+        );
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Chat started with ${book.ownerName}!'),
+            backgroundColor: AppTheme.accentColor,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error starting chat: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Color _getConditionColor(BookCondition condition) {

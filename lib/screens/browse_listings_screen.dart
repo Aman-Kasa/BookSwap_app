@@ -4,7 +4,6 @@ import '../utils/app_theme.dart';
 import '../models/book_model.dart';
 import '../widgets/book_card.dart';
 import '../providers/book_provider.dart';
-import '../utils/sample_data.dart';
 import 'add_book_screen.dart';
 
 class BrowseListingsScreen extends StatefulWidget {
@@ -16,9 +15,6 @@ class _BrowseListingsScreenState extends State<BrowseListingsScreen> with Ticker
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  bool _isLoadingSample = false;
-  
-  List<BookModel> _localBooks = [];
 
   @override
   void initState() {
@@ -28,111 +24,6 @@ class _BrowseListingsScreenState extends State<BrowseListingsScreen> with Ticker
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
     _fadeController.forward();
-    _loadLocalBooks();
-  }
-  
-  void _loadLocalBooks() {
-    _localBooks = [
-      BookModel(
-        id: '1',
-        title: 'The Picture of Dorian Gray',
-        author: 'Oscar Wilde',
-        condition: BookCondition.Good,
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51jNORv6nQL._SX331_BO1,204,203,200_.jpg',
-        ownerId: 'user1',
-        ownerName: 'Alice Johnson',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 1)),
-      ),
-      BookModel(
-        id: '2',
-        title: '1984',
-        author: 'George Orwell',
-        condition: BookCondition.LikeNew,
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/61NAx5pd6XL._SX342_BO1,204,203,200_.jpg',
-        ownerId: 'user2',
-        ownerName: 'Bob Smith',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 2)),
-      ),
-      BookModel(
-        id: '3',
-        title: 'The Art of Seduction',
-        author: 'Robert Greene',
-        condition: BookCondition.Used,
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51X7dEUFgoL._SX331_BO1,204,203,200_.jpg',
-        ownerId: 'user3',
-        ownerName: 'Carol Davis',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 3)),
-      ),
-      BookModel(
-        id: '4',
-        title: 'To Kill a Mockingbird',
-        author: 'Harper Lee',
-        condition: BookCondition.Good,
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51IXWZzlgSL._SX330_BO1,204,203,200_.jpg',
-        ownerId: 'user4',
-        ownerName: 'David Wilson',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 4)),
-      ),
-      BookModel(
-        id: '5',
-        title: 'The Great Gatsby',
-        author: 'F. Scott Fitzgerald',
-        condition: BookCondition.LikeNew,
-        imageUrl: 'https://m.media-amazon.com/images/I/81af+MCATTL._AC_UF1000,1000_QL80_.jpg',
-        ownerId: 'user5',
-        ownerName: 'Emma Brown',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 5)),
-      ),
-      BookModel(
-        id: '6',
-        title: 'The 48 Laws of Power',
-        author: 'Robert Greene',
-        condition: BookCondition.Good,
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51NiGlapXlL._SX331_BO1,204,203,200_.jpg',
-        ownerId: 'user6',
-        ownerName: 'Grace Lee',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 6)),
-      ),
-      BookModel(
-        id: '7',
-        title: 'The Adventures of Sherlock Holmes',
-        author: 'Arthur Conan Doyle',
-        condition: BookCondition.Used,
-        imageUrl: 'https://m.media-amazon.com/images/I/71aFt4+OTOL._AC_UF1000,1000_QL80_.jpg',
-        ownerId: 'user7',
-        ownerName: 'Henry Clark',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 7)),
-      ),
-      BookModel(
-        id: '8',
-        title: 'The Power of Now',
-        author: 'Osho',
-        condition: BookCondition.LikeNew,
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/61NAx5pd6XL._SX342_BO1,204,203,200_.jpg',
-        ownerId: 'user8',
-        ownerName: 'Ivy Chen',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 8)),
-      ),
-      BookModel(
-        id: '9',
-        title: 'Meditation: The First and Last Freedom',
-        author: 'Osho',
-        condition: BookCondition.Good,
-        imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/41T0iBxY8FL._SX440_BO1,204,203,200_.jpg',
-        ownerId: 'user9',
-        ownerName: 'Jack Thompson',
-        status: SwapStatus.Available,
-        createdAt: DateTime.now().subtract(Duration(days: 9)),
-      ),
-    ];
   }
 
   @override
@@ -140,8 +31,6 @@ class _BrowseListingsScreenState extends State<BrowseListingsScreen> with Ticker
     _fadeController.dispose();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -269,32 +158,78 @@ class _BrowseListingsScreenState extends State<BrowseListingsScreen> with Ticker
                                   gradient: LinearGradient(colors: AppTheme.accentGradient),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: Text(
-                                  '${_localBooks.length} books',
-                                  style: TextStyle(
-                                    color: AppTheme.primaryColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                  ),
+                                child: Consumer<BookProvider>(
+                                  builder: (context, bookProvider, child) {
+                                    return Text(
+                                      '${bookProvider.books.length} books',
+                                      style: TextStyle(
+                                        color: AppTheme.primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
                           ),
                           SizedBox(height: 20),
                           Expanded(
-                            child: ListView.builder(
-                              padding: EdgeInsets.only(bottom: 100),
-                              itemCount: _localBooks.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 16),
-                                  child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 300 + (index * 100)),
-                                    curve: Curves.easeOutBack,
-                                    child: BookCard(
-                                      book: _localBooks[index],
+                            child: Consumer<BookProvider>(
+                              builder: (context, bookProvider, child) {
+                                if (bookProvider.books.isEmpty) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(colors: AppTheme.accentGradient),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.library_books,
+                                            size: 50,
+                                            color: AppTheme.primaryColor,
+                                          ),
+                                        ),
+                                        SizedBox(height: 20),
+                                        Text(
+                                          'No books available',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppTheme.textPrimary,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          'Be the first to add a book!',
+                                          style: TextStyle(
+                                            color: AppTheme.textSecondary,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                  );
+                                }
+                                
+                                return ListView.builder(
+                                  padding: EdgeInsets.only(bottom: 100),
+                                  itemCount: bookProvider.books.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: EdgeInsets.only(bottom: 16),
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 300 + (index * 100)),
+                                        curve: Curves.easeOutBack,
+                                        child: BookCard(
+                                          book: bookProvider.books[index],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),
