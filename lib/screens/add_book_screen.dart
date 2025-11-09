@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
   final _authorController = TextEditingController();
   
   BookCondition _selectedCondition = BookCondition.Good;
-  File? _selectedImage;
-  XFile? _selectedImageWeb;
+  String _imageBase64 = '';
+  bool _isUploading = false;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -101,23 +102,26 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(color: AppTheme.accentColor, width: 2),
                                 ),
-                                child: _selectedImage != null || _selectedImageWeb != null
+                                child: _imageBase64.isNotEmpty
                                     ? ClipRRect(
                                         borderRadius: BorderRadius.circular(14),
-                                        child: kIsWeb && _selectedImageWeb != null
-                                            ? Image.network(_selectedImageWeb!.path, fit: BoxFit.cover)
-                                            : _selectedImage != null
-                                                ? Image.file(_selectedImage!, fit: BoxFit.cover)
-                                                : Container(),
+                                        child: Image.memory(
+                                          base64Decode(_imageBase64),
+                                          fit: BoxFit.cover,
+                                        ),
                                       )
-                                    : Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.camera_alt, size: 40, color: AppTheme.accentColor),
-                                          SizedBox(height: 8),
-                                          Text('Add Cover Photo', style: TextStyle(color: AppTheme.accentColor)),
-                                        ],
-                                      ),
+                                    : _isUploading
+                                        ? Center(
+                                            child: CircularProgressIndicator(color: AppTheme.accentColor),
+                                          )
+                                        : Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.camera_alt, size: 40, color: AppTheme.accentColor),
+                                              SizedBox(height: 8),
+                                              Text('Add Cover Photo', style: TextStyle(color: AppTheme.accentColor)),
+                                            ],
+                                          ),
                               ),
                             ),
                           ),
@@ -279,15 +283,27 @@ class _AddBookScreenState extends State<AddBookScreen> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+
+    setState(() => _isUploading = true);
+
+    try {
+      final bytes = await picked.readAsBytes();
+      final base64Image = base64Encode(bytes);
+      print('Image picked: ${bytes.length} bytes, base64 length: ${base64Image.length}');
+
       setState(() {
-        if (kIsWeb) {
-          _selectedImageWeb = image;
-        } else {
-          _selectedImage = File(image.path);
-        }
+        _imageBase64 = base64Image;
+        _isUploading = false;
       });
+      
+      print('Image base64 set successfully');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Image upload failed: $e')),
+      );
+      setState(() => _isUploading = false);
     }
   }
 
@@ -304,16 +320,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
             title: _titleController.text,
             author: _authorController.text,
             condition: _selectedCondition,
-            imageUrl: '',
+            imageUrl: _imageBase64,
             ownerId: user.id,
             ownerName: user.name,
             status: SwapStatus.Available,
             createdAt: DateTime.now(),
           );
 
-          File? imageFile = kIsWeb ? null : _selectedImage;
           print('Creating book: ${book.title} by ${book.author}');
-          await context.read<BookProvider>().createBook(book, imageFile);
+          print('Book image URL length: ${book.imageUrl.length}');
+          await context.read<BookProvider>().createBook(book, null);
           print('Book created successfully!');
           
           ScaffoldMessenger.of(context).showSnackBar(

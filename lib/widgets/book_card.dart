@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/book_model.dart';
@@ -52,33 +53,33 @@ class BookCard extends StatelessWidget {
               ),
               clipBehavior: Clip.hardEdge,
               child: book.imageUrl.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: book.imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[100],
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppTheme.accentColor,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[100],
-                        child: Icon(
-                          Icons.menu_book_rounded,
-                          size: 40,
-                          color: AppTheme.textSecondary,
-                        ),
-                      ),
-                    )
+                  ? _buildBookImage(book.imageUrl)
                   : Container(
-                      color: Colors.grey[100],
-                      child: Icon(
-                        Icons.menu_book_rounded,
-                        size: 40,
-                        color: AppTheme.textSecondary,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppTheme.accentColor.withOpacity(0.8), AppTheme.accentColor],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            book.title.isNotEmpty ? book.title[0].toUpperCase() : 'B',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Icon(
+                            Icons.menu_book_rounded,
+                            size: 20,
+                            color: Colors.white.withOpacity(0.8),
+                          ),
+                        ],
                       ),
                     ),
             ),
@@ -246,6 +247,69 @@ class BookCard extends StatelessWidget {
       case SwapStatus.Rejected:
         return AppTheme.errorColor;
     }
+  }
+
+  Widget _buildBookImage(String imageUrl) {
+    try {
+      // Check if it's base64 encoded
+      if (imageUrl.startsWith('data:') || !imageUrl.startsWith('http')) {
+        // Remove data URL prefix if present
+        String base64String = imageUrl.contains(',') ? imageUrl.split(',')[1] : imageUrl;
+        return Image.memory(
+          base64Decode(base64String),
+          fit: BoxFit.cover,
+        );
+      } else {
+        // It's a regular URL
+        return CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            color: Colors.grey[100],
+            child: Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.accentColor,
+                strokeWidth: 2,
+              ),
+            ),
+          ),
+          errorWidget: (context, url, error) => _buildPlaceholder(),
+        );
+      }
+    } catch (e) {
+      return _buildPlaceholder();
+    }
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.accentColor.withOpacity(0.8), AppTheme.accentColor],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            book.title.isNotEmpty ? book.title[0].toUpperCase() : 'B',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 4),
+          Icon(
+            Icons.menu_book_rounded,
+            size: 20,
+            color: Colors.white.withOpacity(0.8),
+          ),
+        ],
+      ),
+    );
   }
 
   Color _getConditionColor(BookCondition condition) {

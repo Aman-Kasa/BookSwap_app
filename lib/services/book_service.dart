@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/book_model.dart';
@@ -56,29 +57,42 @@ class BookService {
       Reference ref = _storage.ref().child('book_images').child('$bookId.jpg');
       UploadTask uploadTask = ref.putFile(imageFile);
       TaskSnapshot snapshot = await uploadTask;
-      return await snapshot.ref.getDownloadURL();
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      print('Image uploaded successfully: $downloadUrl');
+      return downloadUrl;
     } catch (e) {
+      print('Error uploading image: $e');
       throw e;
     }
   }
 
-  Future<void> createBook(BookModel book, File? imageFile) async {
+  Future<String> uploadImageBytes(List<int> imageBytes, String bookId) async {
     try {
-      print('BookService: Starting book creation');
+      print('Starting image upload with ${imageBytes.length} bytes');
+      Reference ref = _storage.ref().child('book_images').child('$bookId.jpg');
+      UploadTask uploadTask = ref.putData(Uint8List.fromList(imageBytes));
+      
+      // Add timeout
+      TaskSnapshot snapshot = await uploadTask.timeout(Duration(seconds: 30));
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      print('Image bytes uploaded successfully: $downloadUrl');
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image bytes: $e');
+      // Return empty string instead of throwing to continue without image
+      return '';
+    }
+  }
+
+  Future<void> createBookSimple(BookModel book) async {
+    try {
+      print('BookService: Starting simple book creation');
       String bookId = _firestore.collection('books').doc().id;
       print('BookService: Generated book ID: $bookId');
-      String imageUrl = '';
+      print('BookService: Image data length: ${book.imageUrl.length}');
       
-      if (imageFile != null) {
-        print('BookService: Uploading image...');
-        imageUrl = await uploadImage(imageFile, bookId);
-        print('BookService: Image uploaded: $imageUrl');
-      } else {
-        print('BookService: No image file provided');
-      }
-      
-      BookModel newBook = book.copyWith(id: bookId, imageUrl: imageUrl);
-      print('BookService: Saving book to Firestore: ${newBook.toMap()}');
+      BookModel newBook = book.copyWith(id: bookId);
+      print('BookService: Saving book to Firestore with image data');
       await _firestore.collection('books').doc(bookId).set(newBook.toMap());
       print('BookService: Book saved successfully!');
     } catch (e) {

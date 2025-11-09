@@ -37,13 +37,14 @@ class BookProvider with ChangeNotifier {
     return _bookService.getUserOffers(userId);
   }
 
-  Future<void> createBook(BookModel book, File? imageFile) async {
+  Future<void> createBook(BookModel book, File? imageFile, {List<int>? imageBytes}) async {
     _isLoading = true;
     notifyListeners();
     
     try {
       print('BookProvider: Creating book ${book.title}');
-      await _bookService.createBook(book, imageFile);
+      print('BookProvider: Book imageUrl length: ${book.imageUrl.length}');
+      await _bookService.createBookSimple(book);
       print('BookProvider: Book created successfully');
     } catch (e) {
       print('BookProvider: Error creating book: $e');
