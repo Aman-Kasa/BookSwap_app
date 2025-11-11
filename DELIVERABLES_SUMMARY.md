@@ -25,11 +25,11 @@
 
 ### ✅ (b) Dart Analyzer Screenshot
 **Command**: `flutter analyze`
-**Results**: 274 issues found (mostly style warnings, no critical errors)
+**Results**: 273 issues found (mostly style warnings, no critical errors)
 
 **Analysis Summary**:
-- **Warnings**: 8 (unused imports, unused fields, null-aware operators)
-- **Info**: 266 (style guidelines, deprecated methods, best practices)
+- **Warnings**: 9 (unused imports, unused fields, null-aware operators)
+- **Info**: 264 (style guidelines, deprecated methods, best practices)
 - **Errors**: 0 (no blocking issues)
 
 **Key Findings**:
@@ -177,13 +177,13 @@ BookSwap_app/
 - Clear design documentation
 - Professional presentation
 
-## 📝 Submission Notes
+## 📝 Canvas Submission Files
 
-### Files Ready for Submission
-1. **REFLECTION.md** → Convert to PDF for submission
-2. **Dart Analyzer Screenshot** → Capture from terminal output above
-3. **GitHub Repository** → Already public and accessible
-4. **DESIGN_SUMMARY.md** → 1-2 page design document complete
+### Ready for Upload (4 Files)
+1. **REFLECTION.pdf** → Convert REFLECTION.md to PDF (with embedded screenshots)
+2. **dart_analyzer_results.png** → Screenshot of `flutter analyze` terminal output
+3. **DESIGN_SUMMARY.md** → 1-2 page architecture document (ready as-is)
+4. **GitHub_Repository_Link.txt** → Repository URL and information (ready as-is)
 
 ### Additional Supporting Documents
 - **README.md** → Comprehensive project documentation

@@ -1,10 +1,19 @@
 # BookSwap App - Development Reflection
 
+**Developer**: Aman Kasa (a.kasa@alustudent.com)  
+**Institution**: African Leadership University  
+**Coach/Facilitator**: Samiratu  
+**Repository**: https://github.com/Aman-Kasa/BookSwap_app.git
+
+---
+
 ## Firebase Errors Encountered and Resolutions
 
 ### Error 1: Firebase Authentication Email Verification Issue
 
-**Screenshot Location**: `screenshots/firebase_auth_error.png`
+![Firebase Authentication Error](screenshots/firebase_auth_error.png)
+
+**Screenshot**: Firebase authentication email verification error
 
 **Error Description**:
 ```
@@ -42,7 +51,9 @@ Code: email-not-verified
 
 ### Error 2: Firestore Permission Denied for Swap Operations
 
-**Screenshot Location**: `screenshots/firestore_permission_error.png`
+![Firestore Permission Error](screenshots/firestore_permission_error.png)
+
+**Screenshot**: Firestore permission denied error for swap operations
 
 **Error Description**:
 ```

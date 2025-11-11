@@ -1,0 +1,17 @@
+BookSwap App - GitHub Repository
+
+Repository URL: https://github.com/Aman-Kasa/BookSwap_app.git
+
+Developer: Aman Kasa
+Email: a.kasa@alustudent.com
+University: African Leadership University
+Coach/Facilitator: Samiratu
+
+Repository Features:
+- Clean project structure with proper folder organization
+- Comprehensive README.md with installation guide
+- Complete Flutter source code for BookSwap app
+- Firebase integration and configuration files
+- Cross-platform support (Android, iOS, Web)
+- Modern UI/UX with dark theme
+- Real-time chat and swap functionality
