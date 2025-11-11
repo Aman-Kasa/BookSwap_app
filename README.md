@@ -80,7 +80,7 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Splash Screen | Login Screen | Sign Up | Email Verification |
 |:---:|:---:|:---:|:---:|
-| <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&h=400&fit=crop&crop=center" width="180" alt="Splash"><br/>**📚 BookSwap**<br/>*Dark themed splash*<br/>*App logo & branding* | <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=200&h=400&fit=crop&crop=center" width="180" alt="Login"><br/>**🔐 Sign In**<br/>*Email & Password*<br/>*Firebase Auth* | <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&h=400&fit=crop&crop=center" width="180" alt="SignUp"><br/>**📝 Create Account**<br/>*University email*<br/>*Profile setup* | <img src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=200&h=400&fit=crop&crop=center" width="180" alt="Verify"><br/>**📧 Verify Email**<br/>*Required step*<br/>*Security check* |
+| ![Splash Screen](screenshots/splash_screen.png)<br/>**📚 BookSwap**<br/>*Dark themed splash*<br/>*App logo & branding* | ![Login Screen](screenshots/login_screen.png)<br/>**🔐 Sign In**<br/>*Email & Password*<br/>*Firebase Auth* | ![Sign Up](screenshots/signup_screen.png)<br/>**📝 Create Account**<br/>*University email*<br/>*Profile setup* | ![Email Verification](screenshots/email_verification.png)<br/>**📧 Verify Email**<br/>*Required step*<br/>*Security check* |
 
 </div>
 
@@ -90,11 +90,11 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Browse Books | My Listings |
 |:---:|:---:|
-| <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=250&h=400&fit=crop&crop=center" width="220" alt="Browse"><br/>**🔍 Discover Books**<br/>*Grid view of textbooks*<br/>*Search & filter*<br/>*Real-time updates* | <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=250&h=400&fit=crop&crop=center" width="220" alt="MyBooks"><br/>**📚 Your Books**<br/>*Manage listings*<br/>*Edit & delete*<br/>*View offers* |
+| ![Browse Books](screenshots/browse_books.png)<br/>**🔍 Discover Books**<br/>*Grid view of textbooks*<br/>*Search & filter*<br/>*Real-time updates* | ![My Listings](screenshots/my_listings.png)<br/>**📚 Your Books**<br/>*Manage listings*<br/>*Edit & delete*<br/>*View offers* |
 
 | Chat Rooms | Settings |
 |:---:|:---:|
-| <img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=250&h=400&fit=crop&crop=center" width="220" alt="Chats"><br/>**💬 Messages**<br/>*Real-time chat*<br/>*Chat history*<br/>*Auto-created* | <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=250&h=400&fit=crop&crop=center" width="220" alt="Settings"><br/>**⚙️ Profile**<br/>*User management*<br/>*Preferences*<br/>*Account settings* |
+| ![Chat Rooms](screenshots/chat_rooms.png)<br/>**💬 Messages**<br/>*Real-time chat*<br/>*Chat history*<br/>*Auto-created* | ![Settings](screenshots/settings.png)<br/>**⚙️ Profile**<br/>*User management*<br/>*Preferences*<br/>*Account settings* |
 
 </div>
 
@@ -104,7 +104,7 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Add New Book | Book Details | Edit Book |
 |:---:|:---:|:---:|
-| <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&h=350&fit=crop&crop=center" width="180" alt="Add"><br/>**➕ Add Book**<br/>*📸 Photo upload*<br/>*📝 Details form*<br/>*🏷️ Condition rating* | <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=350&fit=crop&crop=center" width="180" alt="Details"><br/>**📖 Book Details**<br/>*📊 Full info view*<br/>*👤 Owner details*<br/>*🔄 Swap button* | <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&h=350&fit=crop&crop=center" width="180" alt="Edit"><br/>**✏️ Edit Book**<br/>*🔄 Update info*<br/>*📸 New photos*<br/>*💾 Save changes* |
+| ![Add Book](screenshots/add_book.png)<br/>**➕ Add Book**<br/>*📸 Photo upload*<br/>*📝 Details form*<br/>*🏷️ Condition rating* | ![Book Details](screenshots/book_details.png)<br/>**📖 Book Details**<br/>*📊 Full info view*<br/>*👤 Owner details*<br/>*🔄 Swap button* | ![Edit Book](screenshots/edit_book.png)<br/>**✏️ Edit Book**<br/>*🔄 Update info*<br/>*📸 New photos*<br/>*💾 Save changes* |
 
 </div>
 
@@ -114,7 +114,7 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Chat List | Live Messages | Swap Offers |
 |:---:|:---:|:---:|
-| <img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=200&h=350&fit=crop&crop=center" width="180" alt="ChatList"><br/>**📋 Active Chats**<br/>*💬 All conversations*<br/>*👁️ Last message*<br/>*🔴 Unread count* | <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=350&fit=crop&crop=center" width="180" alt="Messages"><br/>**⚡ Real-time Chat**<br/>*💬 Instant messaging*<br/>*⏰ Timestamps*<br/>*✍️ Typing indicators* | <img src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=200&h=350&fit=crop&crop=center" width="180" alt="Offers"><br/>**🔄 Swap Management**<br/>*⏳ Pending offers*<br/>*✅ Accept/Reject*<br/>*📊 Status tracking* |
+| ![Chat List](screenshots/chat_list.png)<br/>**📋 Active Chats**<br/>*💬 All conversations*<br/>*👁️ Last message*<br/>*🔴 Unread count* | ![Live Messages](screenshots/chat_messages.png)<br/>**⚡ Real-time Chat**<br/>*💬 Instant messaging*<br/>*⏰ Timestamps*<br/>*✍️ Typing indicators* | ![Swap Offers](screenshots/swap_offers.png)<br/>**🔄 Swap Management**<br/>*⏳ Pending offers*<br/>*✅ Accept/Reject*<br/>*📊 Status tracking* |
 
 </div>
 
