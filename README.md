@@ -73,24 +73,42 @@ BookSwap creates a **trusted marketplace** where students can:
 <div align="center">
 
 ### 🔐 Authentication Flow
-| Splash Screen | Login | Sign Up | Email Verification |
-|:---:|:---:|:---:|:---:|
-| ![Splash](https://via.placeholder.com/200x350/1a1a2e/ffffff?text=BookSwap%0ASplash) | ![Login](https://via.placeholder.com/200x350/16213e/ffffff?text=Login%0AScreen) | ![SignUp](https://via.placeholder.com/200x350/0f3460/ffffff?text=Sign%20Up%0AForm) | ![Verify](https://via.placeholder.com/200x350/e94560/ffffff?text=Email%0AVerification) |
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Splash-BookSwap-1a1a2e?style=for-the-badge&logo=mobile&logoColor=white" alt="Splash Screen" width="180" height="60">
+  <img src="https://img.shields.io/badge/Login-Screen-16213e?style=for-the-badge&logo=login&logoColor=white" alt="Login" width="180" height="60">
+  <img src="https://img.shields.io/badge/Sign%20Up-Form-0f3460?style=for-the-badge&logo=user-plus&logoColor=white" alt="Sign Up" width="180" height="60">
+  <img src="https://img.shields.io/badge/Email-Verification-e94560?style=for-the-badge&logo=mail&logoColor=white" alt="Email Verification" width="180" height="60">
+</p>
 
 ### 📚 Main Application Tabs
-| Browse Books | My Listings | Chats | Settings |
-|:---:|:---:|:---:|:---:|
-| ![Browse](https://via.placeholder.com/200x350/533483/ffffff?text=Browse%0AListings) | ![MyBooks](https://via.placeholder.com/200x350/7209b7/ffffff?text=My%0AListings) | ![Chats](https://via.placeholder.com/200x350/2d4a22/ffffff?text=Chat%0ARooms) | ![Settings](https://via.placeholder.com/200x350/472d30/ffffff?text=Settings%0AProfile) |
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Browse-Books-533483?style=for-the-badge&logo=search&logoColor=white" alt="Browse Books" width="200" height="80">
+  <img src="https://img.shields.io/badge/My-Listings-7209b7?style=for-the-badge&logo=book&logoColor=white" alt="My Listings" width="200" height="80">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Chat-Rooms-2d4a22?style=for-the-badge&logo=chat&logoColor=white" alt="Chats" width="200" height="80">
+  <img src="https://img.shields.io/badge/Settings-Profile-472d30?style=for-the-badge&logo=settings&logoColor=white" alt="Settings" width="200" height="80">
+</p>
 
 ### 🔄 Book Management & Swaps
-| Add New Book | Book Details | Edit Book | Swap Offers |
-|:---:|:---:|:---:|:---:|
-| ![AddBook](https://via.placeholder.com/200x350/6a994e/ffffff?text=Add%0ANew%20Book) | ![Details](https://via.placeholder.com/200x350/386641/ffffff?text=Book%0ADetails) | ![Edit](https://via.placeholder.com/200x350/bc6c25/ffffff?text=Edit%0ABook) | ![Offers](https://via.placeholder.com/200x350/dda15e/ffffff?text=Swap%0AOffers) |
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Add%20New-Book-6a994e?style=for-the-badge&logo=plus&logoColor=white" alt="Add Book" width="180" height="60">
+  <img src="https://img.shields.io/badge/Book-Details-386641?style=for-the-badge&logo=info&logoColor=white" alt="Book Details" width="180" height="60">
+  <img src="https://img.shields.io/badge/Edit-Book-bc6c25?style=for-the-badge&logo=edit&logoColor=white" alt="Edit Book" width="180" height="60">
+  <img src="https://img.shields.io/badge/Swap-Offers-dda15e?style=for-the-badge&logo=exchange&logoColor=white" alt="Swap Offers" width="180" height="60">
+</p>
 
 ### 💬 Real-time Chat System
-| Chat List | Chat Messages | Message Input |
-|:---:|:---:|:---:|
-| ![ChatList](https://via.placeholder.com/200x350/283618/ffffff?text=Chat%0AList) | ![Messages](https://via.placeholder.com/200x350/354f52/ffffff?text=Real-time%0AMessages) | ![Input](https://via.placeholder.com/200x350/52796f/ffffff?text=Message%0AInput) |
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Chat-List-283618?style=for-the-badge&logo=list&logoColor=white" alt="Chat List" width="200" height="60">
+  <img src="https://img.shields.io/badge/Real%20time-Messages-354f52?style=for-the-badge&logo=message&logoColor=white" alt="Messages" width="200" height="60">
+  <img src="https://img.shields.io/badge/Message-Input-52796f?style=for-the-badge&logo=keyboard&logoColor=white" alt="Message Input" width="200" height="60">
+</p>
 
 </div>
 
@@ -108,7 +126,14 @@ BookSwap creates a **trusted marketplace** where students can:
 
 <div align="center">
 
-[![BookSwap Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtube.com/watch?v=your-demo-video)
+[![BookSwap Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/watch?v=your-demo-video)
+
+**🎬 Demo Features:**
+- 📱 **Mobile App Demo**: Complete walkthrough of all features
+- 🔥 **Firebase Console**: Real-time backend operations
+- 🎯 **User Flows**: Authentication, CRUD, Swaps, Chat
+- 📊 **State Management**: Live Provider updates
+- 🔄 **Real-time Sync**: Multi-device synchronization
 
 **📹 7-12 minute comprehensive demo showing:**
 - 🔐 Complete authentication flow with Firebase console
