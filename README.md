@@ -80,7 +80,7 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Splash Screen | Login Screen | Sign Up | Email Verification |
 |:---:|:---:|:---:|:---:|
-| ![Splash Screen](screenshots/splash_screen.png)<br/>**📚 BookSwap**<br/>*Dark themed splash*<br/>*App logo & branding* | ![Login Screen](screenshots/login_screen.png)<br/>**🔐 Sign In**<br/>*Email & Password*<br/>*Firebase Auth* | ![Sign Up](screenshots/signup_screen.png)<br/>**📝 Create Account**<br/>*University email*<br/>*Profile setup* | ![Email Verification](screenshots/email_verification.png)<br/>**📧 Verify Email**<br/>*Required step*<br/>*Security check* |
+| ![Splash Screen](https://via.placeholder.com/200x400/1a1a2e/ffffff?text=📚%0ABookSwap%0ASplash)<br/>**📚 BookSwap**<br/>*Dark themed splash*<br/>*App logo & branding* | ![Login Screen](screenshots/welcome_login.png)<br/>**🔐 Welcome Back**<br/>*Email & Password*<br/>*Firebase Auth* | ![Sign Up](https://via.placeholder.com/200x400/0f3460/ffffff?text=📝%0ASign%20Up%0AForm)<br/>**📝 Create Account**<br/>*University email*<br/>*Profile setup* | ![Email Verification](https://via.placeholder.com/200x400/e94560/ffffff?text=📧%0AEmail%0AVerification)<br/>**📧 Verify Email**<br/>*Required step*<br/>*Security check* |
 
 </div>
 
@@ -90,11 +90,11 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Browse Books | My Listings |
 |:---:|:---:|
-| ![Browse Books](screenshots/browse_books.png)<br/>**🔍 Discover Books**<br/>*Grid view of textbooks*<br/>*Search & filter*<br/>*Real-time updates* | ![My Listings](screenshots/my_listings.png)<br/>**📚 Your Books**<br/>*Manage listings*<br/>*Edit & delete*<br/>*View offers* |
+| ![Browse Books](screenshots/browse_listings.png)<br/>**🔍 Browse Listings**<br/>*Available books display*<br/>*Search & filter*<br/>*Real-time updates* | ![My Listings](https://via.placeholder.com/250x400/7209b7/ffffff?text=📚%0AMy%0AListings)<br/>**📚 Your Books**<br/>*Manage listings*<br/>*Edit & delete*<br/>*View offers* |
 
 | Chat Rooms | Settings |
 |:---:|:---:|
-| ![Chat Rooms](screenshots/chat_rooms.png)<br/>**💬 Messages**<br/>*Real-time chat*<br/>*Chat history*<br/>*Auto-created* | ![Settings](screenshots/settings.png)<br/>**⚙️ Profile**<br/>*User management*<br/>*Preferences*<br/>*Account settings* |
+| ![Chat Rooms](https://via.placeholder.com/250x400/2d4a22/ffffff?text=💬%0AChat%0ARooms)<br/>**💬 Messages**<br/>*Real-time chat*<br/>*Chat history*<br/>*Auto-created* | ![Settings](https://via.placeholder.com/250x400/472d30/ffffff?text=⚙️%0ASettings%0AProfile)<br/>**⚙️ Profile**<br/>*User management*<br/>*Preferences*<br/>*Account settings* |
 
 </div>
 
@@ -104,7 +104,7 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Add New Book | Book Details | Edit Book |
 |:---:|:---:|:---:|
-| ![Add Book](screenshots/add_book.png)<br/>**➕ Add Book**<br/>*📸 Photo upload*<br/>*📝 Details form*<br/>*🏷️ Condition rating* | ![Book Details](screenshots/book_details.png)<br/>**📖 Book Details**<br/>*📊 Full info view*<br/>*👤 Owner details*<br/>*🔄 Swap button* | ![Edit Book](screenshots/edit_book.png)<br/>**✏️ Edit Book**<br/>*🔄 Update info*<br/>*📸 New photos*<br/>*💾 Save changes* |
+| ![Add Book](https://via.placeholder.com/200x350/6a994e/ffffff?text=➕%0AAdd%0ABook)<br/>**➕ Add Book**<br/>*📸 Photo upload*<br/>*📝 Details form*<br/>*🏷️ Condition rating* | ![Book Details](https://via.placeholder.com/200x350/386641/ffffff?text=📖%0ABook%0ADetails)<br/>**📖 Book Details**<br/>*📊 Full info view*<br/>*👤 Owner details*<br/>*🔄 Swap button* | ![Edit Book](https://via.placeholder.com/200x350/bc6c25/ffffff?text=✏️%0AEdit%0ABook)<br/>**✏️ Edit Book**<br/>*🔄 Update info*<br/>*📸 New photos*<br/>*💾 Save changes* |
 
 </div>
 
@@ -114,7 +114,7 @@ BookSwap creates a **trusted marketplace** where students can:
 
 | Chat List | Live Messages | Swap Offers |
 |:---:|:---:|:---:|
-| ![Chat List](screenshots/chat_list.png)<br/>**📋 Active Chats**<br/>*💬 All conversations*<br/>*👁️ Last message*<br/>*🔴 Unread count* | ![Live Messages](screenshots/chat_messages.png)<br/>**⚡ Real-time Chat**<br/>*💬 Instant messaging*<br/>*⏰ Timestamps*<br/>*✍️ Typing indicators* | ![Swap Offers](screenshots/swap_offers.png)<br/>**🔄 Swap Management**<br/>*⏳ Pending offers*<br/>*✅ Accept/Reject*<br/>*📊 Status tracking* |
+| ![Chat List](https://via.placeholder.com/200x350/283618/ffffff?text=📋%0AChat%0AList)<br/>**📋 Active Chats**<br/>*💬 All conversations*<br/>*👁️ Last message*<br/>*🔴 Unread count* | ![Live Messages](https://via.placeholder.com/200x350/354f52/ffffff?text=⚡%0AReal-time%0AChat)<br/>**⚡ Real-time Chat**<br/>*💬 Instant messaging*<br/>*⏰ Timestamps*<br/>*✍️ Typing indicators* | ![Swap Offers](https://via.placeholder.com/200x350/52796f/ffffff?text=🔄%0ASwap%0AOffers)<br/>**🔄 Swap Management**<br/>*⏳ Pending offers*<br/>*✅ Accept/Reject*<br/>*📊 Status tracking* |
 
 </div>
 
@@ -522,7 +522,17 @@ flowchart TD
 
 </details>
 
-### 🧭 **Navigation Guide**
+### 🧭 **Navigation System**
+
+<div align="center">
+
+| Hamburger Menu | Navigation Options |
+|:---:|:---:|
+| ![Hamburger Menu](screenshots/hamburger_menu.png)<br/>**🍔 Side Navigation**<br/>*Clean menu design*<br/>*Easy access to all features*<br/>*BookSwap branding* | **📱 Navigation Features**<br/>🏠 **Home** - Browse available books<br/>📚 **My Listings** - Manage your books<br/>🔄 **My Offers** - Track swap requests<br/>💬 **Chats** - Real-time messaging<br/>⚙️ **Settings** - Account preferences<br/>❓ **Help** - Support & guidance<br/>🚪 **Logout** - Secure sign out |
+
+</div>
+
+### 🎯 **Tab Navigation Guide**
 
 | Tab | Purpose | Key Features |
 |-----|---------|-------------|
