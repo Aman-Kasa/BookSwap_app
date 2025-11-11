@@ -98,23 +98,27 @@ BookSwap creates a **trusted marketplace** where students can:
 
 </div>
 
-### 🔄 Book Management Features
+### 🧭 Navigation System
 
 <div align="center">
 
-| Add New Book | Book Details | Edit Book |
-|:---:|:---:|:---:|
-| ![Add Book](https://via.placeholder.com/200x350/6a994e/ffffff?text=➕%0AAdd%0ABook)<br/>**➕ Add Book**<br/>*📸 Photo upload*<br/>*📝 Details form*<br/>*🏷️ Condition rating* | ![Book Details](https://via.placeholder.com/200x350/386641/ffffff?text=📖%0ABook%0ADetails)<br/>**📖 Book Details**<br/>*📊 Full info view*<br/>*👤 Owner details*<br/>*🔄 Swap button* | ![Edit Book](https://via.placeholder.com/200x350/bc6c25/ffffff?text=✏️%0AEdit%0ABook)<br/>**✏️ Edit Book**<br/>*🔄 Update info*<br/>*📸 New photos*<br/>*💾 Save changes* |
+| Hamburger Menu |
+|:---:|
+| ![Hamburger Menu](screenshots/hamburger_menu.png)<br/>**🍔 Side Navigation**<br/>*BookSwap branding header*<br/>*Clean menu design*<br/>*🏠 Home - Browse available books*<br/>*📚 My Listings - Manage your books*<br/>*🔄 My Offers - Track swap requests*<br/>*💬 Chats - Real-time messaging*<br/>*⚙️ Settings - Account preferences*<br/>*❓ Help - Support & guidance*<br/>*🚪 Logout - Secure sign out* |
 
 </div>
 
-### 💬 Real-time Chat System
+### 🎨 App Features Showcase
 
 <div align="center">
 
-| Chat List | Live Messages | Swap Offers |
-|:---:|:---:|:---:|
-| ![Chat List](https://via.placeholder.com/200x350/283618/ffffff?text=📋%0AChat%0AList)<br/>**📋 Active Chats**<br/>*💬 All conversations*<br/>*👁️ Last message*<br/>*🔴 Unread count* | ![Live Messages](https://via.placeholder.com/200x350/354f52/ffffff?text=⚡%0AReal-time%0AChat)<br/>**⚡ Real-time Chat**<br/>*💬 Instant messaging*<br/>*⏰ Timestamps*<br/>*✍️ Typing indicators* | ![Swap Offers](https://via.placeholder.com/200x350/52796f/ffffff?text=🔄%0ASwap%0AOffers)<br/>**🔄 Swap Management**<br/>*⏳ Pending offers*<br/>*✅ Accept/Reject*<br/>*📊 Status tracking* |
+**📱 Real App Screenshots Above Show:**
+- 🔐 **Welcome Screen** - Clean login interface with BookSwap branding
+- 🔍 **Browse Listings** - Search functionality with book cards and swap buttons  
+- 🍔 **Navigation Menu** - Side drawer with all app features accessible
+- 🎨 **Dark Theme** - Consistent yellow accent colors throughout
+- 📚 **Book Management** - Easy book listing and condition tracking
+- 💬 **Real-time Features** - Instant updates and synchronization
 
 </div>
 
@@ -134,7 +138,7 @@ BookSwap creates a **trusted marketplace** where students can:
 
 <div align="center">
 
-[![BookSwap Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/watch?v=your-demo-video)
+[![BookSwap Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/2PG9O55bvSE?si=vU5RyNyd31EupEVV)
 
 **🎬 Demo Features:**
 - 📱 **Mobile App Demo**: Complete walkthrough of all features
