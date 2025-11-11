@@ -74,53 +74,20 @@ BookSwap creates a **trusted marketplace** where students can:
 
 <div align="center">
 
-### 🔐 Authentication Flow
-
-<div align="center">
-
-| Splash Screen | Login Screen | Sign Up | Email Verification |
-|:---:|:---:|:---:|:---:|
-| ![Splash Screen](https://via.placeholder.com/200x400/1a1a2e/ffffff?text=📚%0ABookSwap%0ASplash)<br/>**📚 BookSwap**<br/>*Dark themed splash*<br/>*App logo & branding* | ![Login Screen](screenshots/welcome_login.png)<br/>**🔐 Welcome Back**<br/>*Email & Password*<br/>*Firebase Auth* | ![Sign Up](https://via.placeholder.com/200x400/0f3460/ffffff?text=📝%0ASign%20Up%0AForm)<br/>**📝 Create Account**<br/>*University email*<br/>*Profile setup* | ![Email Verification](https://via.placeholder.com/200x400/e94560/ffffff?text=📧%0AEmail%0AVerification)<br/>**📧 Verify Email**<br/>*Required step*<br/>*Security check* |
-
-</div>
-
-### 📚 Main Application Tabs
-
-<div align="center">
-
-| Browse Books | My Listings |
-|:---:|:---:|
-| ![Browse Books](screenshots/browse_listings.png)<br/>**🔍 Browse Listings**<br/>*Available books display*<br/>*Search & filter*<br/>*Real-time updates* | ![My Listings](https://via.placeholder.com/250x400/7209b7/ffffff?text=📚%0AMy%0AListings)<br/>**📚 Your Books**<br/>*Manage listings*<br/>*Edit & delete*<br/>*View offers* |
-
-| Chat Rooms | Settings |
-|:---:|:---:|
-| ![Chat Rooms](https://via.placeholder.com/250x400/2d4a22/ffffff?text=💬%0AChat%0ARooms)<br/>**💬 Messages**<br/>*Real-time chat*<br/>*Chat history*<br/>*Auto-created* | ![Settings](https://via.placeholder.com/250x400/472d30/ffffff?text=⚙️%0ASettings%0AProfile)<br/>**⚙️ Profile**<br/>*User management*<br/>*Preferences*<br/>*Account settings* |
-
-</div>
-
-### 🧭 Navigation System
-
-<div align="center">
-
-| Hamburger Menu |
+### 🔐 Welcome/Login Screen
+| ![Login Screen](screenshots/welcome_login.png) |
 |:---:|
-| ![Hamburger Menu](screenshots/hamburger_menu.png)<br/>**🍔 Side Navigation**<br/>*BookSwap branding header*<br/>*Clean menu design*<br/>*🏠 Home - Browse available books*<br/>*📚 My Listings - Manage your books*<br/>*🔄 My Offers - Track swap requests*<br/>*💬 Chats - Real-time messaging*<br/>*⚙️ Settings - Account preferences*<br/>*❓ Help - Support & guidance*<br/>*🚪 Logout - Secure sign out* |
+| **🔐 Welcome Back**<br/>*Sign in to continue your book journey*<br/>*Email & Password fields with Firebase Auth*<br/>*Remember me & Forgot password options*<br/>*Clean dark theme with yellow accents* |
 
-</div>
+### 📚 Browse Listings Screen  
+| ![Browse Books](screenshots/browse_listings.png) |
+|:---:|
+| **🔍 Browse Listings**<br/>*Search books, authors, or subjects*<br/>*Available Books counter (16 books)*<br/>*Book cards with cover images*<br/>*Condition tags (Used, Good, Like New)*<br/>*Swap buttons for each book*<br/>*Owner information display*<br/>*Add Book floating action button* |
 
-### 🎨 App Features Showcase
-
-<div align="center">
-
-**📱 Real App Screenshots Above Show:**
-- 🔐 **Welcome Screen** - Clean login interface with BookSwap branding
-- 🔍 **Browse Listings** - Search functionality with book cards and swap buttons  
-- 🍔 **Navigation Menu** - Side drawer with all app features accessible
-- 🎨 **Dark Theme** - Consistent yellow accent colors throughout
-- 📚 **Book Management** - Easy book listing and condition tracking
-- 💬 **Real-time Features** - Instant updates and synchronization
-
-</div>
+### 🧭 Navigation Menu
+| ![Hamburger Menu](screenshots/hamburger_menu.png) |
+|:---:|
+| **🍔 Side Navigation**<br/>*BookSwap branding header*<br/>*🏠 Home - Browse available books*<br/>*📚 My Listings - Manage your books*<br/>*🔄 My Offers - Track swap requests*<br/>*💬 Chats - Real-time messaging*<br/>*⚙️ Settings - Account preferences*<br/>*❓ Help - Support & guidance*<br/>*🚪 Logout - Secure sign out* |
 
 </div>
 
