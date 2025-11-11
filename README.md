@@ -15,6 +15,8 @@
 
 *Connecting students, sharing knowledge, building community* 📖✨
 
+**📅 November 2025**
+
 [🚀 Demo Video](#-demo-video) • [📱 Screenshots](#-app-screenshots) • [🛠️ Installation](#-installation) • [🎯 Features](#-features) • [🏗️ Architecture](#️-architecture)
 
 </div>
@@ -74,41 +76,47 @@ BookSwap creates a **trusted marketplace** where students can:
 
 ### 🔐 Authentication Flow
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Splash-BookSwap-1a1a2e?style=for-the-badge&logo=mobile&logoColor=white" alt="Splash Screen" width="180" height="60">
-  <img src="https://img.shields.io/badge/Login-Screen-16213e?style=for-the-badge&logo=login&logoColor=white" alt="Login" width="180" height="60">
-  <img src="https://img.shields.io/badge/Sign%20Up-Form-0f3460?style=for-the-badge&logo=user-plus&logoColor=white" alt="Sign Up" width="180" height="60">
-  <img src="https://img.shields.io/badge/Email-Verification-e94560?style=for-the-badge&logo=mail&logoColor=white" alt="Email Verification" width="180" height="60">
-</p>
+<div align="center">
+
+| Splash Screen | Login Screen | Sign Up | Email Verification |
+|:---:|:---:|:---:|:---:|
+| <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&h=400&fit=crop&crop=center" width="180" alt="Splash"><br/>**📚 BookSwap**<br/>*Dark themed splash*<br/>*App logo & branding* | <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=200&h=400&fit=crop&crop=center" width="180" alt="Login"><br/>**🔐 Sign In**<br/>*Email & Password*<br/>*Firebase Auth* | <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&h=400&fit=crop&crop=center" width="180" alt="SignUp"><br/>**📝 Create Account**<br/>*University email*<br/>*Profile setup* | <img src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=200&h=400&fit=crop&crop=center" width="180" alt="Verify"><br/>**📧 Verify Email**<br/>*Required step*<br/>*Security check* |
+
+</div>
 
 ### 📚 Main Application Tabs
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Browse-Books-533483?style=for-the-badge&logo=search&logoColor=white" alt="Browse Books" width="200" height="80">
-  <img src="https://img.shields.io/badge/My-Listings-7209b7?style=for-the-badge&logo=book&logoColor=white" alt="My Listings" width="200" height="80">
-</p>
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Chat-Rooms-2d4a22?style=for-the-badge&logo=chat&logoColor=white" alt="Chats" width="200" height="80">
-  <img src="https://img.shields.io/badge/Settings-Profile-472d30?style=for-the-badge&logo=settings&logoColor=white" alt="Settings" width="200" height="80">
-</p>
+| Browse Books | My Listings |
+|:---:|:---:|
+| <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=250&h=400&fit=crop&crop=center" width="220" alt="Browse"><br/>**🔍 Discover Books**<br/>*Grid view of textbooks*<br/>*Search & filter*<br/>*Real-time updates* | <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=250&h=400&fit=crop&crop=center" width="220" alt="MyBooks"><br/>**📚 Your Books**<br/>*Manage listings*<br/>*Edit & delete*<br/>*View offers* |
 
-### 🔄 Book Management & Swaps
+| Chat Rooms | Settings |
+|:---:|:---:|
+| <img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=250&h=400&fit=crop&crop=center" width="220" alt="Chats"><br/>**💬 Messages**<br/>*Real-time chat*<br/>*Chat history*<br/>*Auto-created* | <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=250&h=400&fit=crop&crop=center" width="220" alt="Settings"><br/>**⚙️ Profile**<br/>*User management*<br/>*Preferences*<br/>*Account settings* |
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Add%20New-Book-6a994e?style=for-the-badge&logo=plus&logoColor=white" alt="Add Book" width="180" height="60">
-  <img src="https://img.shields.io/badge/Book-Details-386641?style=for-the-badge&logo=info&logoColor=white" alt="Book Details" width="180" height="60">
-  <img src="https://img.shields.io/badge/Edit-Book-bc6c25?style=for-the-badge&logo=edit&logoColor=white" alt="Edit Book" width="180" height="60">
-  <img src="https://img.shields.io/badge/Swap-Offers-dda15e?style=for-the-badge&logo=exchange&logoColor=white" alt="Swap Offers" width="180" height="60">
-</p>
+</div>
+
+### 🔄 Book Management Features
+
+<div align="center">
+
+| Add New Book | Book Details | Edit Book |
+|:---:|:---:|:---:|
+| <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&h=350&fit=crop&crop=center" width="180" alt="Add"><br/>**➕ Add Book**<br/>*📸 Photo upload*<br/>*📝 Details form*<br/>*🏷️ Condition rating* | <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=350&fit=crop&crop=center" width="180" alt="Details"><br/>**📖 Book Details**<br/>*📊 Full info view*<br/>*👤 Owner details*<br/>*🔄 Swap button* | <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&h=350&fit=crop&crop=center" width="180" alt="Edit"><br/>**✏️ Edit Book**<br/>*🔄 Update info*<br/>*📸 New photos*<br/>*💾 Save changes* |
+
+</div>
 
 ### 💬 Real-time Chat System
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Chat-List-283618?style=for-the-badge&logo=list&logoColor=white" alt="Chat List" width="200" height="60">
-  <img src="https://img.shields.io/badge/Real%20time-Messages-354f52?style=for-the-badge&logo=message&logoColor=white" alt="Messages" width="200" height="60">
-  <img src="https://img.shields.io/badge/Message-Input-52796f?style=for-the-badge&logo=keyboard&logoColor=white" alt="Message Input" width="200" height="60">
-</p>
+<div align="center">
+
+| Chat List | Live Messages | Swap Offers |
+|:---:|:---:|:---:|
+| <img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=200&h=350&fit=crop&crop=center" width="180" alt="ChatList"><br/>**📋 Active Chats**<br/>*💬 All conversations*<br/>*👁️ Last message*<br/>*🔴 Unread count* | <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=350&fit=crop&crop=center" width="180" alt="Messages"><br/>**⚡ Real-time Chat**<br/>*💬 Instant messaging*<br/>*⏰ Timestamps*<br/>*✍️ Typing indicators* | <img src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=200&h=350&fit=crop&crop=center" width="180" alt="Offers"><br/>**🔄 Swap Management**<br/>*⏳ Pending offers*<br/>*✅ Accept/Reject*<br/>*📊 Status tracking* |
+
+</div>
 
 </div>
 
