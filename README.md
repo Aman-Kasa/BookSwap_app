@@ -75,17 +75,17 @@ BookSwap creates a **trusted marketplace** where students can:
 <div align="center">
 
 ### 🔐 Welcome/Login Screen
-| ![Login Screen](screenshots/welcome_login.png) |
+| ![Login Screen](https://via.placeholder.com/300x600/16213e/FFC107?text=Welcome+Back%0A%0ASign+in+to+continue%0Ayour+book+journey%0A%0AEmail+Address%0APassword%0A%0ASign+In) |
 |:---:|
 | **🔐 Welcome Back**<br/>*Sign in to continue your book journey*<br/>*Email & Password fields with Firebase Auth*<br/>*Remember me & Forgot password options*<br/>*Clean dark theme with yellow accents* |
 
 ### 📚 Browse Listings Screen  
-| ![Browse Books](screenshots/browse_listings.png) |
+| ![Browse Books](https://via.placeholder.com/300x600/2c3e50/FFC107?text=Browse+Listings%0A%0ASearch+books...%0A%0AAvailable+Books+16%0A%0ASherlock+Holmes%0AUsed+Available+SWAP%0A%0ADetective+Woman%0AGood+Available+SWAP%0A%0AAdd+Book+%2B) |
 |:---:|
 | **🔍 Browse Listings**<br/>*Search books, authors, or subjects*<br/>*Available Books counter (16 books)*<br/>*Book cards with cover images*<br/>*Condition tags (Used, Good, Like New)*<br/>*Swap buttons for each book*<br/>*Owner information display*<br/>*Add Book floating action button* |
 
 ### 🧭 Navigation Menu
-| ![Hamburger Menu](screenshots/hamburger_menu.png) |
+| ![Hamburger Menu](https://via.placeholder.com/300x600/2c3e50/FFC107?text=BookSwap%0A%0AHome%0AMy+Listings%0AMy+Offers%0AChats%0ASettings%0AHelp%0ALogout) |
 |:---:|
 | **🍔 Side Navigation**<br/>*BookSwap branding header*<br/>*🏠 Home - Browse available books*<br/>*📚 My Listings - Manage your books*<br/>*🔄 My Offers - Track swap requests*<br/>*💬 Chats - Real-time messaging*<br/>*⚙️ Settings - Account preferences*<br/>*❓ Help - Support & guidance*<br/>*🚪 Logout - Secure sign out* |
 
